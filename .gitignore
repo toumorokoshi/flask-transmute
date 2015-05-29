@@ -1,0 +1,8 @@
+# uranium files
+bin/
+include/
+lib/
+lib64/
+*.egg-info/
+.uranium/
+*.pyc
