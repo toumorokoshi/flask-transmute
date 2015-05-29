@@ -6,3 +6,4 @@ lib64/
 *.egg-info/
 .uranium/
 *.pyc
+dist/
