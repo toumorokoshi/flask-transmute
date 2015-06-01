@@ -34,16 +34,13 @@ class Deck(object):
         """ retrieve all cards from the deck """
         return self._cards
 
-
-voodoo = flask_voodoo.Voodoo()
 deck = Deck()
-voodoo.autoroute(deck, '/deck',
-                 # if exceptions are added to error_exceptions,
-                 # they will be caught and raise a success: false
-                 # response, with the error message being the message
-                 # of the exception
-                 error_exceptions=(DeckException))
 app = Flask(__name__)
-voodoo.init_app(app)
+flask_voodoo.autoroute(app, deck, '/deck',
+                       # if exceptions are added to error_exceptions,
+                       # they will be caught and raise a success: false
+                       # response, with the error message being the message
+                       # of the exception
+                       error_exceptions=(DeckException))
 app.debug = True
 app.run()
