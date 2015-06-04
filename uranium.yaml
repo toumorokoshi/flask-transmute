@@ -1,2 +1,4 @@
 develop-eggs:
   - .
+eggs:
+  jedi: null

@@ -15,10 +15,9 @@ def autoroute(flask_app, object_to_route, path,
     flask_app.register_blueprint(blueprint, url_prefix=path)
 
 
-def autoroute_function(router, func_to_route, path,
-                       error_exceptions=None):
-    methods = ["POST"] if is_mutates(func_to_route) else ["GET"]
-    router.route(path, methods=methods)(
+def autoroute_function(router, voodoo_function):
+    methods = ["POST"] if voodoo_function.mutates else ["GET"]
+    router.route(vodoo_function.path, methods=methods)(
         wrap_method(func_to_route, error_exceptions=error_exceptions)
     )
 
