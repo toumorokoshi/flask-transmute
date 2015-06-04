@@ -1,29 +1,26 @@
 import inspect
 
 
-class VoodooFunction(object):
+class VoodooFunc(object):
     """
     VoodooFunctions are objects that wrap a method, allowing
     extensions to extract metadata for their own use (such as
     automatic documentation)
     """
 
-    def __init__(self, path, func, error_exceptions=None):
+    def __init__(self, func, error_exceptions=None):
         # arguments should be the arguments passed into
         # the function
         self.arguments = _extract_arguments(func)
         # description should be a description of the api
         # endpoint, for use in autodocumentation
-        self.description = func.__doC__
+        self.description = func.__doc__
         # error_exceptions represents the exceptions
         # that should be caught and return an API exception
         self.error_exceptions = error_exceptions
         # mutates should be set to True if the function
         # mutates data.
         self.mutates = getattr(func, "mutates", False)
-        # the path is the path that will eventually be routed
-        # to the flask app.
-        self.path = path
         # produces represents the return types supported
         # by the final function
         self.produces = ["application/json"]

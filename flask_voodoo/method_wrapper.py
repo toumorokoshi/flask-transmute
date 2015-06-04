@@ -16,7 +16,9 @@ def wrap_method(voodoo_function):
     vf = voodoo_function
 
     is_post_method = vf.mutates
-    api_exceptions = list(vf.error_exceptions or []) + [ApiException]
+    api_exceptions = tuple(
+        list(vf.error_exceptions or []) + [ApiException]
+    )
     args_not_empty = len(vf.arguments) > 0
 
     @functools.wraps(vf.raw_func)
@@ -46,9 +48,9 @@ def _retrieve_request_params(args_not_empty, is_post_method):
     if not is_post_method:
         request_args = request.args
     else:
-        if _request_wants_json():
+        if "json" in request.content_type:
             try:
-                request_args = json.loads(request.get_data())
+                request_args = json.loads(request.get_data().decode("UTF-8"))
                 if not isinstance(request_args, dict) and args_not_empty:
                     raise ApiException("expected json object: {0}".format(str(e)))
             except ValueError as e:
@@ -62,19 +64,12 @@ def _extract_and_convert_args(arguments, request_args):
     kwargs = {}
     for argument, desired_type in arguments.items():
         if argument not in request_args:
-            return jsonify({
-                "success": False,
-                "detail": "parameter {0} is required".format(argument)
-            })
-
+            raise ApiException("parameter {0} is required".format(argument))
         try:
             convert_type = TYPE_CONVERTERS[desired_type]
             value = convert_type(request_args[argument])
         except ConversionError as e:
-            return jsonify({
-                "success": False,
-                "detail": "parameter {0}: {1}".format(argument, str(e))
-            })
+            raise ApiException("parameter {0}: {1}".format(argument, str(e)))
         kwargs[argument] = value
     return kwargs
 

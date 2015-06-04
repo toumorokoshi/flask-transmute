@@ -4,7 +4,3 @@ def mutates(f):
     """
     f.mutates = True
     return f
-
-
-def is_mutates(f):
-    return getattr(f, 'mutates', False)

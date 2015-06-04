@@ -36,11 +36,11 @@ class Deck(object):
 
 deck = Deck()
 app = Flask(__name__)
-flask_voodoo.autoroute(app, deck, '/deck',
+flask_voodoo.autoroute(app, '/deck', deck,
                        # if exceptions are added to error_exceptions,
                        # they will be caught and raise a success: false
                        # response, with the error message being the message
                        # of the exception
-                       error_exceptions=(DeckException))
+                       error_exceptions=[DeckException])
 app.debug = True
 app.run()

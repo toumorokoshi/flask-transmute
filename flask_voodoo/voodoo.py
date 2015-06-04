@@ -1,10 +1,9 @@
 from collections import namedtuple
-from .autoroute import (
-    autoroute_function as _autoroute_function
-)
+from .autoroute import autoroute_voodoo_func
+from .function import VoodooFunc
 from .utils import get_public_callables
 
-RouteArgs = namedtuple("RouteArgs", ["func", "path", "options"])
+RouteArgs = namedtuple("RouteArgs", ["path", "voodoo_func"])
 
 
 class Voodoo(object):
@@ -23,32 +22,31 @@ class Voodoo(object):
     def add_extension(self, extension):
         self._extensions.append(extension)
 
-    def autoroute(self, obj, path, **options):
+    def autoroute(self, path, obj, **options):
         for method_name, func in get_public_callables(obj):
             method_path = path + "/" + method_name
-            self.autoroute_function(func, method_path, **options)
+            self.autoroute_function(method_path, func, **options)
 
-    def autoroute_function(self, func, path, **options):
-        route_args = RouteArgs(func, path, options)
+    def autoroute_function(self, path, func, **options):
+        route_args = RouteArgs(path, VoodooFunc(func, **options))
         self._routes.append(route_args)
 
     def init_app(self, app):
         router = app
         for route in self._routes:
-            func, path, options = route
-            self._route_func(router, func, path, **options)
+            path, func = route
+            self._route_func(router, path, func)
 
         for ext in self._extensions:
             ext.init_app(app)
 
-    def _route_func(self, router, func, path, **options):
-        args = (router, func, path, options)
+    def _route_func(self, router, path, func):
+        args = (router, path, func)
         for extension in self._extensions:
-            args = extension.route_func(router, func, path, **options)
+            args = extension.route_func(router, path, func)
             if args is None:
                 break
-            router, func, path, options = args
 
         if args:
-            router, func, path, options = args
-            _autoroute_function(router, func, path, **options)
+            router, path, func = args
+            autoroute_voodoo_func(router, path, func)

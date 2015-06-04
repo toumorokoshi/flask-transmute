@@ -28,7 +28,14 @@ def convert_bool(value):
     return value.startswith("t") or value.startswith("y")
 
 
+def convert_string(value):
+    if value is None:
+        raise ConversionError("string expected. nonetype received")
+    return str(value)
+
+
 TYPE_CONVERTERS = {
     int: convert_int,
-    bool: convert_bool
+    bool: convert_bool,
+    str: convert_string
 }
