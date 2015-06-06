@@ -1,4 +1,9 @@
-import inspect
+from collections import namedtuple
+from .compat import getfullargspec
+
+
+ArgumentInfo = namedtuple("ArgumentInfo", ["default", "type"])
+NoDefault = object()
 
 
 class VoodooFunc(object):
@@ -36,13 +41,21 @@ def _extract_arguments(func):
     which should be retrieved and passed
     into the function
     """
-    argspec = inspect.getargspec(func)
-    annotations = getattr(func, "__annotations__", {})
+    argspec = getfullargspec(func)
+    attributes = (getattr(argspec, "args", []) +
+                  getattr(argspec, "keywords", []))
+    defaults = argspec.defaults or []
+
     arguments = {}
-    for attr_name in ["args", "keywords"]:
-        for key in (getattr(argspec, attr_name) or []):
-            if key != "self":
-                arguments[key] = annotations.get(key, str)
+    for i, name in enumerate(reversed(attributes)):
+        if name == "self":
+            continue
+
+        default = NoDefault if len(defaults) <= i else defaults[i]
+        arguments[name] = ArgumentInfo(
+            default, argspec.annotations.get(name, str)
+        )
+
     return arguments
 
 

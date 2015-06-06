@@ -34,6 +34,11 @@ class Deck(object):
         """ retrieve all cards from the deck """
         return self._cards
 
+    def get_card(self, index=None):
+        if index is None:
+            return self._cards
+        return self._cards[index]
+
 
 voodoo = flask_voodoo.Voodoo()
 deck = Deck()

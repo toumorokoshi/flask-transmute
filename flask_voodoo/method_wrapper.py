@@ -2,6 +2,7 @@ import json
 import functools
 from flask import jsonify, request
 from .helpers.type_converters import TYPE_CONVERTERS, ConversionError
+from .function import NoDefault
 
 
 class ApiException(Exception):
@@ -62,11 +63,14 @@ def _retrieve_request_params(args_not_empty, is_post_method):
 
 def _extract_and_convert_args(arguments, request_args):
     kwargs = {}
-    for argument, desired_type in arguments.items():
+    for argument, info in arguments.items():
         if argument not in request_args:
-            raise ApiException("parameter {0} is required".format(argument))
+            if info.default is NoDefault:
+                raise ApiException("parameter {0} is required".format(argument))
+            else:
+                continue
         try:
-            convert_type = TYPE_CONVERTERS[desired_type]
+            convert_type = TYPE_CONVERTERS[info.type]
             value = convert_type(request_args[argument])
         except ConversionError as e:
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))
