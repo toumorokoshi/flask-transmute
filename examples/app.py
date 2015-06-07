@@ -34,6 +34,7 @@ class Deck(object):
         """ retrieve all cards from the deck """
         return self._cards
 
+    @flask_voodoo.annotate({"index": int})
     def get_card(self, index=None):
         if index is None:
             return self._cards

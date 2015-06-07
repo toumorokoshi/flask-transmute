@@ -23,11 +23,11 @@ def wrap_method(voodoo_function):
     args_not_empty = len(vf.arguments) > 0
 
     @functools.wraps(vf.raw_func)
-    def wrapper_func():
+    def wrapper_func(*args, **kwargs):
         try:
             request_params = _retrieve_request_params(args_not_empty, is_post_method)
-            kwargs = _extract_and_convert_args(vf.arguments, request_params)
-            result = vf.raw_func(**kwargs)
+            kwargs.update(_extract_and_convert_args(vf.arguments, request_params))
+            result = vf.raw_func(*args, **kwargs)
         except Exception as e:
             if api_exceptions is not None and isinstance(e, api_exceptions):
                 return jsonify({
