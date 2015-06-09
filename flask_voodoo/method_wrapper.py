@@ -26,7 +26,7 @@ def wrap_method(voodoo_function):
     def wrapper_func(*args, **kwargs):
         try:
             request_params = _retrieve_request_params(args_not_empty, is_post_method)
-            kwargs.update(_extract_and_convert_args(vf.arguments, request_params))
+            _add_request_parameters_to_args(vf.arguments, request_params, kwargs)
             result = vf.raw_func(*args, **kwargs)
         except Exception as e:
             if api_exceptions is not None and isinstance(e, api_exceptions):
@@ -59,6 +59,24 @@ def _retrieve_request_params(args_not_empty, is_post_method):
         else:
             request_args = request.form
     return request_args
+
+
+def _add_request_parameters_to_args(arguments, request_args, arg_dict):
+    for argument, info in arguments.items():
+        if argument in arg_dict:
+            continue
+
+        if argument not in request_args:
+            if info.default is NoDefault:
+                raise ApiException("parameter {0} is required".format(argument))
+            else:
+                continue
+        try:
+            convert_type = TYPE_CONVERTERS[info.type]
+            value = convert_type(request_args[argument])
+        except ConversionError as e:
+            raise ApiException("parameter {0}: {1}".format(argument, str(e)))
+        arg_dict[argument] = value
 
 
 def _extract_and_convert_args(arguments, request_args):
