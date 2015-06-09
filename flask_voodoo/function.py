@@ -33,6 +33,10 @@ class VoodooFunc(object):
         # status_codes represents the possible status codes
         # the function can return
         self.status_codes = _get_default_status_codes()
+        # this is to make discovery easier.
+        # TODO: make sure this doesn't mess up GC, as it's
+        # a cyclic reference.
+        func.vf = self
 
 
 def _extract_arguments(func):

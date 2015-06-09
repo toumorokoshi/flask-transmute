@@ -1,5 +1,10 @@
 #!/usr/bin/env python
+import os
 from setuptools import setup, find_packages
+
+base = os.path.dirname(os.path.abspath(__file__))
+
+README_PATH = os.path.join(base, "README.rst")
 
 install_requires = [
     'Flask'
@@ -8,9 +13,9 @@ install_requires = [
 tests_require = []
 
 setup(name='flask-voodoo',
-      version='0.0.5',
+      version='0.0.6',
       description='a flask plugin to generate routes from objects.',
-      long_description=open('README.rst').read(),
+      long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',
       author_email='yusuke@tsutsumi.io',
       url='',
