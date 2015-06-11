@@ -1,11 +1,27 @@
 from .autoroute import autoroute_function
 
 
-def mutates(f):
+def updates(f):
     """
-    this labels a function as one that mutates data.
+    this labels a function as one that updates data.
     """
-    f.mutates = True
+    f.updates = True
+    return f
+
+
+def creates(f):
+    """
+    this labels a function as one that creates data.
+    """
+    f.creates = True
+    return f
+
+
+def deletes(f):
+    """
+    this labels a function as one that deletes data.
+    """
+    f.deletes = True
     return f
 
 

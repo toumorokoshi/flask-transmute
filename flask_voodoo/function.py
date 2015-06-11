@@ -23,9 +23,11 @@ class VoodooFunc(object):
         # error_exceptions represents the exceptions
         # that should be caught and return an API exception
         self.error_exceptions = error_exceptions
-        # mutates should be set to True if the function
-        # mutates data.
-        self.mutates = getattr(func, "mutates", False)
+        # these are set if the function performs some
+        # operation that modifies data.
+        self.creates = getattr(func, "creates", False)
+        self.deletes = getattr(func, "deletes", False)
+        self.updates = getattr(func, "updates", False)
         # produces represents the return types supported
         # by the final function
         self.produces = ["application/json"]

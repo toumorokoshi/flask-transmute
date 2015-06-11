@@ -16,7 +16,7 @@ def wrap_method(voodoo_function):
     """
     vf = voodoo_function
 
-    is_post_method = vf.mutates
+    is_post_method = vf.creates or vf.updates
     api_exceptions = tuple(
         list(vf.error_exceptions or []) + [ApiException]
     )

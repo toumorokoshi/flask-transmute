@@ -13,7 +13,7 @@ install_requires = [
 tests_require = []
 
 setup(name='flask-voodoo',
-      version='0.0.6',
+      version='0.0.7',
       description='a flask plugin to generate routes from objects.',
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',

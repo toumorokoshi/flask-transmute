@@ -20,8 +20,14 @@ def autoroute_function(router, path, function, **options):
 
 
 def autoroute_voodoo_func(router, path, vf):
-    methods = ["POST"] if vf.mutates else ["GET"]
-    router.route(path, methods=methods)(wrap_method(vf))
+    method = "GET"
+    if vf.creates:
+        method = "PUT"
+    elif vf.deletes:
+        method = "DELETE"
+    elif vf.updates:
+        method = "POST"
+    router.route(path, methods=[method])(wrap_method(vf))
 
 BLUEPRINT_TEMPLATE = "FLASK_VOODOO_{0}"
 
