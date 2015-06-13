@@ -7,3 +7,4 @@ lib64/
 .uranium/
 *.pyc
 dist/
+.Python

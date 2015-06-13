@@ -1,7 +1,7 @@
 import json
 import functools
 from flask import jsonify, request
-from .helpers.type_converters import TYPE_CONVERTERS, ConversionError
+from .helpers.type_converters import get_type_converter, ConversionError
 from .function import NoDefault
 
 
@@ -72,8 +72,13 @@ def _add_request_parameters_to_args(arguments, request_args, arg_dict):
             else:
                 continue
         try:
-            convert_type = TYPE_CONVERTERS[info.type]
-            value = convert_type(request_args[argument])
+            convert_type = get_type_converter(info.type)
+            if isinstance(info.type, list):
+                value = request_args.getlist(argument)
+            else:
+                value = request_args.get(argument)
+            value = convert_type(value)
+
         except ConversionError as e:
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))
         arg_dict[argument] = value
@@ -88,7 +93,7 @@ def _extract_and_convert_args(arguments, request_args):
             else:
                 continue
         try:
-            convert_type = TYPE_CONVERTERS[info.type]
+            convert_type = get_type_converter(info.type)
             value = convert_type(request_args[argument])
         except ConversionError as e:
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))

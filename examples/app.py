@@ -20,7 +20,7 @@ class Deck(object):
     # flask-voodoo that this method will
     # modify data. adding mutates ensures
     # the request will be a POST
-    @flask_voodoo.mutates
+    @flask_voodoo.updates
     def add_card(self, name):
         """ add a card to the deck """
         if len(name) > 100:
@@ -39,6 +39,10 @@ class Deck(object):
         if index is None:
             return self._cards
         return self._cards[index]
+
+    @flask_voodoo.annotate({"index": [int]})
+    def get_cards(self, index):
+        return [self._cards[i] for i in index]
 
 
 voodoo = flask_voodoo.Voodoo()

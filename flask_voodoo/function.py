@@ -1,3 +1,4 @@
+import inspect
 from collections import namedtuple
 from .compat import getfullargspec
 
@@ -38,7 +39,10 @@ class VoodooFunc(object):
         # this is to make discovery easier.
         # TODO: make sure this doesn't mess up GC, as it's
         # a cyclic reference.
-        func.vf = self
+        if inspect.ismethod(func):
+            func.__func__.vf = self
+        else:
+            func.vf = self
 
 
 def _extract_arguments(func):
