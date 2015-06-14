@@ -7,7 +7,7 @@ ArgumentInfo = namedtuple("ArgumentInfo", ["default", "type"])
 NoDefault = object()
 
 
-class VoodooFunc(object):
+class TransmuteFunction(object):
     """
     VoodooFunctions are objects that wrap a method, allowing
     extensions to extract metadata for their own use (such as

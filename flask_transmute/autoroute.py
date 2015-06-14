@@ -1,7 +1,7 @@
 from flask import Blueprint
 from .method_wrapper import wrap_method
 from .utils import get_public_callables
-from .function import VoodooFunc
+from .function import TransmuteFunction
 
 
 def autoroute(flask_app, path, object_to_route, **options):
@@ -15,11 +15,11 @@ def autoroute(flask_app, path, object_to_route, **options):
 
 
 def autoroute_function(router, path, function, **options):
-    vf = VoodooFunc(function, **options)
-    autoroute_voodoo_func(router, path, vf)
+    vf = TransmuteFunction(function, **options)
+    autoroute_transmute_func(router, path, vf)
 
 
-def autoroute_voodoo_func(router, path, vf):
+def autoroute_transmute_func(router, path, vf):
     method = "GET"
     if vf.creates:
         method = "PUT"
@@ -29,7 +29,7 @@ def autoroute_voodoo_func(router, path, vf):
         method = "POST"
     router.route(path, methods=[method])(wrap_method(vf))
 
-BLUEPRINT_TEMPLATE = "FLASK_VOODOO_{0}"
+BLUEPRINT_TEMPLATE = "FLASK_TRANSMUTE_{0}"
 
 
 def _blueprint_name(obj):
