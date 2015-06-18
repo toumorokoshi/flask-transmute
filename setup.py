@@ -7,7 +7,10 @@ base = os.path.dirname(os.path.abspath(__file__))
 README_PATH = os.path.join(base, "README.rst")
 
 install_requires = [
-    'Flask'
+    'Flask',
+    # we're using restplus because it has a nicely bundled
+    # set of statics for swagger.
+    'flask-restplus',
 ]
 
 tests_require = []
