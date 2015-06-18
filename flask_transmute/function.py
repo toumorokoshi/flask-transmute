@@ -17,7 +17,13 @@ class TransmuteFunction(object):
     def __init__(self, func, error_exceptions=None):
         # arguments should be the arguments passed into
         # the function
-        self.arguments = _extract_arguments(func)
+        #
+        # the return type should be specified. If nothing is
+        # passed in, a NoneType is returned.
+        # for a dynamic language like Python, it's not a huge deal:
+        # transmute will still json serialize whatever object you pass it.
+        # however, the return type is valuable for autodocumentation systems.
+        self.arguments, self.return_type = _extract_arguments_and_return_type(func)
         # description should be a description of the api
         # endpoint, for use in autodocumentation
         self.description = func.__doc__
@@ -40,16 +46,16 @@ class TransmuteFunction(object):
         # TODO: make sure this doesn't mess up GC, as it's
         # a cyclic reference.
         if inspect.ismethod(func):
-            func.__func__.vf = self
+            func.__func__.transmute_func = self
         else:
-            func.vf = self
+            func.transmute_func = self
 
 
-def _extract_arguments(func):
+def _extract_arguments_and_return_type(func):
     """
-    return a dict of <name, type> pairs,
-    which should be retrieved and passed
-    into the function
+    return a dict of <name, type> pairs and a <type>,
+    which represent arguments and a return type that
+    should passed into the function and returned.
     """
     argspec = getfullargspec(func)
     attributes = (getattr(argspec, "args", []) +
@@ -66,7 +72,7 @@ def _extract_arguments(func):
             default, argspec.annotations.get(name, str)
         )
 
-    return arguments
+    return arguments, argspec.annotations.get("return", type(None))
 
 
 def _get_default_status_codes():
