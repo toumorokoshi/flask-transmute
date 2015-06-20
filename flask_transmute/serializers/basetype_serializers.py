@@ -54,3 +54,18 @@ class StringSerializer(object):
                 msg.format(type(data).__name__))
         data = data.lower()
         return data.startswith("t") or data.startswith("y")
+
+
+class NoneSerializer(object):
+
+    @staticmethod
+    def serialize(obj):
+        return obj
+
+    @staticmethod
+    def deserialize(data):
+        if data is not None:
+            raise SerializationException("Unable to deserialize {0} to None".format(
+                data
+            ))
+        return None

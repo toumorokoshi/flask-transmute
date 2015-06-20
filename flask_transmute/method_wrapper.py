@@ -1,7 +1,7 @@
 import json
 import functools
 from flask import jsonify, request
-from .helpers.type_converters import get_type_converter, ConversionError
+from .serializers import get_serializer, SerializerException
 from .function import NoDefault
 
 
@@ -21,6 +21,7 @@ def wrap_method(voodoo_function):
         list(vf.error_exceptions or []) + [ApiException]
     )
     args_not_empty = len(vf.arguments) > 0
+    result_serializer = get_serializer(vf.return_type)
 
     @functools.wraps(vf.raw_func)
     def wrapper_func(*args, **kwargs):
@@ -37,8 +38,9 @@ def wrap_method(voodoo_function):
             else:
                 raise
 
+        result = result_serializer.serialize(result)
         return jsonify({
-            "success": True,
+            "success": result,
             "result": result
         })
 
@@ -72,14 +74,14 @@ def _add_request_parameters_to_args(arguments, request_args, arg_dict):
             else:
                 continue
         try:
-            convert_type = get_type_converter(info.type)
+            convert_type = get_serializer(info.type)
             if isinstance(info.type, list):
                 value = request_args.getlist(argument)
             else:
                 value = request_args.get(argument)
             value = convert_type(value)
 
-        except ConversionError as e:
+        except SerializerException as e:
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))
         arg_dict[argument] = value
 
@@ -93,9 +95,8 @@ def _extract_and_convert_args(arguments, request_args):
             else:
                 continue
         try:
-            convert_type = get_type_converter(info.type)
-            value = convert_type(request_args[argument])
-        except ConversionError as e:
+            value = get_serializer(info.type).deserialize(request_args[argument])
+        except SerializerException as e:
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))
         kwargs[argument] = value
     return kwargs

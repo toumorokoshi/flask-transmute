@@ -1,7 +1,12 @@
-import types
-from .exceptions import SerializerException
+from .class_serializer import (
+    class_is_serializable, generate_class_serializer
+)
+from .list_serializer import (
+    list_is_serializable, generate_list_serializer
+)
 from .basetype_serializers import (
     BoolSerializer,
+    NoneSerializer,
     IntSerializer,
     StringSerializer
 )
@@ -10,66 +15,46 @@ from .basetype_serializers import (
 # all known types.
 _SERIALIZER_CACHE = {
     bool: BoolSerializer,
+    type(None): NoneSerializer,
     int: IntSerializer,
     str: StringSerializer
 }
 
 
-def get_serializer(cls, serializers=_SERIALIZER_CACHE):
-    _assert_type_is_serializable(cls, serializers)
-    model = cls.transmute_model
-    from_dict = cls.from_dict
+def get_serializer(cls):
+    cls = _make_signature_hashable(cls)
 
-    class ClassSerializer(object):
-        """ serializes an object to and from a markup-serializable type """
+    if cls in _SERIALIZER_CACHE:
+        return _SERIALIZER_CACHE[cls]
 
-        @staticmethod
-        def serialize(obj):
-            data = {}
-            for attr_name, cls in model.items():
-                serializer = serializers[cls]
-                value = getattr(cls, attr_name)
-                data[attr_name] = serializer.serialize(value)
-            return data
+    _assert_type_is_serializable(cls)
 
-        @staticmethod
-        def deserialize(data):
-            return from_dict(data)
+    if isinstance(cls, tuple):
+        serializer = generate_list_serializer(cls[0], _SERIALIZER_CACHE)
+    else:
+        serializer = generate_class_serializer(cls, _SERIALIZER_CACHE)
 
-    ClassSerializer.__name__ = "{0}Serializer".format(
-        cls.__name__
-    )
-
-    serializers[cls] = ClassSerializer
-    return ClassSerializer
+    _SERIALIZER_CACHE[cls] = serializer
+    return serializer
 
 
-def _assert_type_is_serializable(cls, serializers):
-    if cls in [bool, str, int]:
+def _make_signature_hashable(cls):
+    """
+    convert the class signature to a hashable object
+    """
+    if isinstance(cls, list):
+        return (cls[0],)
+    return cls
+
+
+def _assert_type_is_serializable(cls):
+    if cls in _SERIALIZER_CACHE:
         return
 
-    from_dict = getattr(cls, "from_dict", None)
+    if isinstance(cls, tuple):
+        for subclass in list_is_serializable(cls):
+            get_serializer(subclass)
 
-    if not from_dict or not isinstance(from_dict, types.FunctionType):
-        raise SerializerException(
-            "class requires from_dict static method to be serializable!")
-
-    model = getattr(cls, "transmute_model", None)
-
-    if not model or not isinstance(model, dict):
-        raise SerializerException(
-            "class requires transmute_model dict attribute to be serializable!")
-
-    for key, value in model:
-        if not isinstance(key, str):
-            raise SerializerException(
-                "key {0} is not a string when loading transmute_model for {1}".format(
-                    key, cls
-                ))
-
-        if not isinstance(value, type):
-            raise SerializerException("expected a type for a value in when loading transmute_model for {1}. got {0} instead.".format(
-                value, cls
-            ))
-
-        get_serializer(value)
+    else:
+        for subclass in class_is_serializable(cls):
+            get_serializer(subclass)

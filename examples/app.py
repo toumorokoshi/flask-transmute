@@ -1,5 +1,6 @@
 from flask import Flask
 import flask_transmute
+from flask_transmute.swagger import Swagger
 
 
 # having an exception that is raised in
@@ -43,33 +44,35 @@ class Card(object):
 class Deck(object):
 
     def __init__(self):
-        self._cards = []
+        self._cards = [Card("foo", "bar")]
 
     # the update decorator tells
     # flask-transmute that this method will
     # modify data. adding updtate ensures
     # the request will be a POST
     @flask_transmute.updates
-    def add_card(self, name):
+    def add_card(self, card: Card):
         """ add a card to the deck """
-        if len(name) > 100:
+        if len(card.name) > 100:
             raise DeckException(
                 "the name is too long! must be under 100 characters."
             )
-        self._cards += [name]
-        return {"card": name}
+        self._cards += [card]
+        return {"card": card}
 
-    def cards(self):
+    def cards(self) -> [Card]:
         """ retrieve all cards from the deck """
         return self._cards
 
 deck = Deck()
 app = Flask(__name__)
+swagger = Swagger("myApi", "1.0")
 flask_transmute.autoroute(app, '/deck', deck,
                           # if exceptions are added to error_exceptions,
                           # they will be caught and raise a success: false
                           # response, with the error message being the message
                           # of the exception
                           error_exceptions=[DeckException])
+swagger.init_app(app)
 app.debug = True
 app.run()
