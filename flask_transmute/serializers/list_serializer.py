@@ -12,7 +12,7 @@ def generate_list_serializer(cls, serializers):
     class ListSerializer(object):
 
         @staticmethod
-        def serializer(obj):
+        def serialize(obj):
             return [
                 sub_serializer.serialize(e) for e in obj
             ]
@@ -20,7 +20,11 @@ def generate_list_serializer(cls, serializers):
         @staticmethod
         def deserialize(data):
             if not isinstance(data, list):
-            pass
+                raise SerializerException(
+                    "unable to serialize a {0} object into a list.".format(type(data.__name__))
+                )
+
+            return [sub_serializer.deserialize(e) for e in data]
 
     ListSerializer.__name__ = "{0}ListSerializer".format(
         cls.__name__

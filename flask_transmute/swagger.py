@@ -90,9 +90,13 @@ def _extract_swagger_pathspec(voodoo_func):
             param_spec["type"] = "array"
             param_spec["items"] = {"type": SWAGGER_TYPEMAP.get(subtype, subtype.__name__)}
             param_spec["collectionFormat"] = "multi"
-        else:
-            param_spec["type"] = SWAGGER_TYPEMAP.get(arg_info.type,
-                                                     arg_info.type.__name__)
+        elif arg_info.type in SWAGGER_TYPEMAP:
+            param_spec["type"] = SWAGGER_TYPEMAP.get(
+                arg_info.type, arg_info.type.__name__
+            )
+        elif hasattr(arg_info.type, "transmute_model"):
+            spec = _generate_model(arg_info.type.transmute_model)
+            param_spec["schema"] = spec
         path_spec["parameters"].append(param_spec)
 
     for code, description in transmute_func.status_codes.items():
@@ -108,3 +112,18 @@ def _extract_swagger_pathspec(voodoo_func):
     elif transmute_func.deletes:
         method = "delete"
     return {method: path_spec}
+
+
+def _generate_model(model):
+    spec = {"type": "object"}
+    required = []
+    properties = {}
+    for key, value in model.items():
+        if value in SWAGGER_TYPEMAP:
+            properties[key] = SWAGGER_TYPEMAP[value]
+        else:
+            properties[key] = _generate_model(value)
+        required.append(key)
+    spec["required"] = required
+    spec["properties"] = properties
+    return spec

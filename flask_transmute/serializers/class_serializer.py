@@ -43,7 +43,7 @@ def generate_class_serializer(cls, serializers):
             data = {}
             for attr_name, cls in model.items():
                 serializer = serializers[cls]
-                value = getattr(cls, attr_name)
+                value = getattr(obj, attr_name)
                 data[attr_name] = serializer.serialize(value)
             return data
 

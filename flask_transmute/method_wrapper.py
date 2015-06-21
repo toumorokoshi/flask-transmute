@@ -40,7 +40,7 @@ def wrap_method(voodoo_function):
 
         result = result_serializer.serialize(result)
         return jsonify({
-            "success": result,
+            "success": True,
             "result": result
         })
 
