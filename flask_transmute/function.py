@@ -41,6 +41,7 @@ class TransmuteFunction(object):
         self.raw_func = func
         # status_codes represents the possible status codes
         # the function can return
+        self.responses = _get_responses(self.return_type)
         self.status_codes = _get_default_status_codes()
         # this is to make discovery easier.
         # TODO: make sure this doesn't mess up GC, as it's
@@ -79,4 +80,17 @@ def _get_default_status_codes():
     return {
         200: "success",
         400: "invalid input received"
+    }
+
+
+def _get_responses(return_type):
+    return {
+        200: {
+            "description": "success",
+            "return_type": return_type
+        },
+        400: {
+            "description": "invalid input received",
+            "return_type": {"message": str}
+        }
     }

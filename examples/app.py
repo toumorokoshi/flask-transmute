@@ -51,7 +51,7 @@ class Deck(object):
     # modify data. adding updtate ensures
     # the request will be a POST
     @flask_transmute.updates
-    def add_card(self, card: Card):
+    def add_card(self, body: Card):
         """ add a card to the deck """
         if len(card.name) > 100:
             raise DeckException(

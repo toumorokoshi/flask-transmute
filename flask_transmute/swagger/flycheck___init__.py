@@ -1,12 +1,59 @@
 import copy
 from flask import jsonify, render_template
 from flask_restplus.apidoc import apidoc
+from .definitions import Definitions
+from .paths import Paths
 
 SWAGGER_TYPEMAP = {
     str: "string",
     int: "integer",
     bool: "boolean",
     list: "array",
+}
+
+EXAMPLE_SWAGGER_JSON = {
+    "info": {"title": "myApi", "version": "1.0"},
+    "swagger": "2.0",
+    "tags": [{
+        "name": "pet"
+    }],
+    "paths": {
+        "/deck/add_card": {
+            "post": {
+                "tags": ["card"],
+                "summary": "add a card to a deck.",
+                "description": "",
+                "produces": ["application/json"],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "required": True,
+                    #"schema": {
+                    #   "$ref": "#/definitions/Card"
+                    #}
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "description": {"type": "string"}
+                        }
+                    }
+                }],
+                "responses": {
+                    "200": {"description": "good input"}
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Card": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "description": {"type": "string"}
+            }
+        }
+    }
 }
 
 
@@ -21,9 +68,10 @@ class Swagger(object):
         self._title = title
         self._version = version
         self._swagger_object = None
-        self._paths = {}
+        self._paths = Paths()
         self._restplus_apidoc = copy.deepcopy(apidoc)
         self._route_prefix = route_prefix
+        self._definitions = Definitions()
 
     def init_app(self, app):
         swagger_json = self._generate_swagger_json(app)
@@ -32,7 +80,8 @@ class Swagger(object):
 
         @app.route(swagger_route)
         def return_swagger_json():
-            return jsonify(swagger_json)
+            return jsonify(EXAMPLE_SWAGGER_JSON)
+            # return jsonify(swagger_json)
 
         @self._restplus_apidoc.route(swagger_ui_route)
         def return_swagger_ui():
@@ -46,6 +95,8 @@ class Swagger(object):
         write a swagger json object. this method should be
         re-run if any changes are made to the routing.
         """
+        self._paths.extract_from_app(app)
+
         swagger_object = {
             "swagger": self.swagger_version,
             "info": {
@@ -54,50 +105,11 @@ class Swagger(object):
             },
             "paths": {}
         }
-        for rule in app.url_map.iter_rules():
-            path = rule.rule
-            endpoint = rule.endpoint
-            func = app.view_functions[endpoint]
-            if hasattr(func, "transmute_func"):
-
-                if path not in swagger_object["paths"]:
-                    swagger_object["paths"][path] = {}
-
-                swagger_object["paths"][path].update(
-                    _extract_swagger_pathspec(func.transmute_func))
+        self._paths.add_to_spec(swagger_object)
+        self._definitions.add_to_spec(swagger_object)
 
         return swagger_object
 
-
-def _extract_swagger_pathspec(voodoo_func):
-    transmute_func = voodoo_func
-    path_spec = {
-        "description": transmute_func.description,
-        "produces": transmute_func.produces,
-        "parameters": [],
-        "responses": {}
-    }
-
-    for arg_name, arg_info in transmute_func.arguments.items():
-        in_type = "formData" if transmute_func.updates or transmute_func.creates else "query"
-        param_spec = {
-            "name": arg_name,
-            "required": arg_info.default is None,
-            "in": in_type
-        }
-        if isinstance(arg_info.type, list):
-            subtype = arg_info.type[0]
-            param_spec["type"] = "array"
-            param_spec["items"] = {"type": SWAGGER_TYPEMAP.get(subtype, subtype.__name__)}
-            param_spec["collectionFormat"] = "multi"
-        elif arg_info.type in SWAGGER_TYPEMAP:
-            param_spec["type"] = SWAGGER_TYPEMAP.get(
-                arg_info.type, arg_info.type.__name__
-            )
-        elif hasattr(arg_info.type, "transmute_model"):
-            spec = _generate_model(arg_info.type.transmute_model)
-            param_spec["schema"] = spec
-        path_spec["parameters"].append(param_spec)
 
     for code, description in transmute_func.status_codes.items():
         path_spec["responses"][str(code)] = {
@@ -114,15 +126,15 @@ def _extract_swagger_pathspec(voodoo_func):
     return {method: path_spec}
 
 
-def _generate_model(model):
+def _generate_schema(model):
     spec = {"type": "object"}
     required = []
     properties = {}
     for key, value in model.items():
         if value in SWAGGER_TYPEMAP:
-            properties[key] = SWAGGER_TYPEMAP[value]
+            properties[key] = {"type": SWAGGER_TYPEMAP[value]}
         else:
-            properties[key] = _generate_model(value)
+            properties[key] = {"schema": _generate_schema(value)}
         required.append(key)
     spec["required"] = required
     spec["properties"] = properties
