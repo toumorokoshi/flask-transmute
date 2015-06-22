@@ -41,14 +41,19 @@ class Paths(object):
                 "in": in_type
             }
 
-            param_spec.update(self._get_property_definition(arg_info.type))
+            type_definition = self._definitions.get(arg_info.type)
+            if in_type == "body":
+                param_spec["schema"] = type_definition
+            else:
+                param_spec.update(type_definition)
+
             path_spec["parameters"].append(param_spec)
 
         for code, details in transmute_func.responses.items():
-            # return_dict = self._get_property_definition(details["return_type"])
-            path_spec["responses"][str(code)] = {
-                "description": details["description"],
-            }
+            response_spec = {"description": details["description"]}
+            if details["return_type"] is not type(None):
+                response_spec["schema"] = self._definitions.get(details["return_type"])
+            path_spec["responses"][str(code)] = response_spec
 
         method = "get"
         if transmute_func.creates:
@@ -58,16 +63,3 @@ class Paths(object):
         elif transmute_func.deletes:
             method = "delete"
         return {method: path_spec}
-
-    def _get_property_definition(self, cls):
-        if isinstance(cls, list):
-            subtype = self._get_property_definition(cls[0])
-            return {
-                "type": "array",
-                "items": {"type": subtype},
-                "collectionFormat": "multi"
-            }
-        elif cls in SWAGGER_TYPEMAP:
-            return SWAGGER_TYPEMAP[cls]
-        else:
-            return {"schema": self._definitions.get_reference(cls)}

@@ -2,57 +2,95 @@ from .utils import SWAGGER_TYPEMAP
 
 
 class Definitions(object):
-    """ stores the definitons for objects used in swagger. """
+    """
+    this class handler returning the correct swagger type spec.
+    it will handler returning the proper schema value.
+    """
 
     def __init__(self):
         self._element_name = "definitions"
-        self._definitions = {}
+        self._definitions = ModelDict()
+
+    def get(self, model_or_cls):
+        if isinstance(model_or_cls, dict):
+            return self._get_reference(model_or_cls)
+
+        elif isinstance(model_or_cls, list):
+            return {
+                "type": "array",
+                "items": self.get(model_or_cls[0]),
+                "collectionFormat": "multi"
+            }
+
+        elif model_or_cls in SWAGGER_TYPEMAP:
+            return {"type": SWAGGER_TYPEMAP[model_or_cls]}
+
+        else:
+            return self._get_reference(model_or_cls)
 
     def add_to_spec(self, spec):
         """ add definitions to the swagger spec """
-        definitions = {}
-        for cls, cls_spec in self._definitions.items():
-            definitions[cls.__name__] = cls_spec
+        spec[self._element_name] = self._definitions
 
-        spec[self._element_name] = definitions
+    def _get_reference(self, model_or_cls):
+        self.add_model(model_or_cls)
 
-    def add_definition(self, cls):
-        if cls in self._definitions:
-            return self._definitions[cls]
+        reference = "#/{0}/{1}".format(
+            self._element_name,
+            self._definitions.to_id(model_or_cls)
+        )
+        return {"$ref": reference}
 
-        model = cls.transmute_model
+    def add_model(self, model_or_cls):
+        if not isinstance(model_or_cls, dict):
+            model = model_or_cls.transmute_model
+        else:
+            model = model_or_cls
+
         properties = {}
         for name, prop_cls in model.items():
-
-            if prop_cls in SWAGGER_TYPEMAP:
-                prop = {"type": SWAGGER_TYPEMAP.get(prop_cls)}
-            else:
-                self.add_definition(prop_cls)
-                prop = self.get_reference(prop_cls)
-
-            properties[name] = prop
+            properties[name] = self.get(prop_cls)
 
         schema = {
             "type": "object",
             "properties": properties
         }
-        self._definitions[cls] = schema
+        self._definitions[model_or_cls] = schema
         return schema
 
-    def get_reference(self, cls):
-        if cls not in self._definitions:
-            self.add_definition(cls)
 
-        reference = "#/{0}/{1}".format(
-            self._element_name, cls.__name__
-        )
-        return {"$ref": reference}
+class ModelDict(dict):
+    """
+    a dictionary that accepts class names or dictionaries
+    as a key.
+    """
+    def __init__(self, *args, **kwargs):
+        # for dictionaries, a stringified key
+        # won't work in the swagger spec.
+        # instead, we assign them ids instead.
+        self._ids = {}
 
-    def get_definition(self, cls):
-        if cls in SWAGGER_TYPEMAP:
-            return {"type": SWAGGER_TYPEMAP[cls]}
+    def __getitem__(self, key, value):
+        key = self.to_id(key)
+        return super(ModelDict, self).__getitem__(key, value)
 
-        if cls in self._definitions:
-            return self._definitions[cls]
+    def __setitem__(self, key, value):
+        key = self.to_id(key)
+        return super(ModelDict, self).__setitem__(key, value)
 
-        return self.add_definition(cls)
+    def __contains__(self, key):
+        key = self.to_id(key)
+        return super(ModelDict, self).__contains__(key)
+
+    def to_id(self, key):
+        if isinstance(key, dict):
+            ids_key = str(key)
+            if ids_key not in self._ids:
+                model_key = str(len(self._ids))
+                self._ids[ids_key] = model_key
+                return model_key
+            else:
+                return self._ids[ids_key]
+        elif isinstance(key, type):
+            key = "{0}.{1}".format(key.__module__, key.__name__)
+        return key
