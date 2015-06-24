@@ -43,7 +43,7 @@ class Definitions(object):
 
     def add_model(self, model_or_cls):
         if not isinstance(model_or_cls, dict):
-            model = model_or_cls.transmute_model
+            model = model_or_cls.transmute_schema
         else:
             model = model_or_cls
 

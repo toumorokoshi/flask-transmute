@@ -33,21 +33,27 @@ class Paths(object):
             "responses": {}
         }
 
-        for arg_name, arg_info in transmute_func.arguments.items():
-            in_type = "body" if transmute_func.updates or transmute_func.creates else "query"
-            param_spec = {
-                "name": arg_name,
-                "required": arg_info.default is None,
-                "in": in_type
-            }
+        if transmute_func.updates or transmute_func.creates:
+            # in the case of updates or creates, we spec this by
+            # specifying all values are passed into the body.
+            param_spec = {"name": "body", "in": "body", "required": True}
+            model = {}
+            for arg_name, arg_info in transmute_func.arguments.items():
+                model[arg_name] = arg_info.type
+            param_spec["schema"] = self._definitions.get(model)
+            path_spec["parameters"].append(param_spec)
 
-            type_definition = self._definitions.get(arg_info.type)
-            if in_type == "body":
-                param_spec["schema"] = type_definition
-            else:
+        else:
+            for arg_name, arg_info in transmute_func.arguments.items():
+                param_spec = {
+                    "name": arg_name,
+                    "required": arg_info.default is None,
+                    "in": "query"
+                }
+                type_definition = self._definitions.get(arg_info.type)
                 param_spec.update(type_definition)
 
-            path_spec["parameters"].append(param_spec)
+                path_spec["parameters"].append(param_spec)
 
         for code, details in transmute_func.responses.items():
             response_spec = {"description": details["description"]}

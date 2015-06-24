@@ -1,10 +1,17 @@
 class SerializerException(Exception):
-        pass
+    pass
+
+
+class InvalidSchema(SerializerException):
+
+    def __init__(self, message, schema):
+        super(SerializerException, self).__init__(message)
+        self.schema = schema
 
 
 class SerializationException(SerializerException):
-        pass
+    pass
 
 
 class DeserializationException(SerializerException):
-        pass
+    pass

@@ -18,18 +18,18 @@ class Card(object):
         self.name = name
         self.description = description
 
-    # transmute_model is an attribute that helps flask_transmute
+    # transmute_schema is an attribute that helps flask_transmute
     # serialize and deserialize your object.
     #
-    # the transmute_model is valid if it is a dictionary of string ->
-    # type pairs, where the type is either a primitive or another
-    # transmutable model.
-    #
-    # providing a transmute_model ensures that your object can
-    # be converted into a return value.
-    transmute_model = {
-        "name": str,
-        "description": str
+    # transmute_schema is a modified json-schema: http://json-schema.org/
+    # in contrast to using primitive types, you pass in classes for the
+    # type definitions.
+    transmute_schema = {
+        "properties": {
+            "name": {"type": str},
+            "description": {"type": str}
+        },
+        "required": ["name", "description"]
     }
 
     # if you want to be able to automatically populate fields
@@ -37,7 +37,7 @@ class Card(object):
     # this is how flask-transmute will be able to convert a data
     # object to a class instance.
     @staticmethod
-    def from_dict(model):
+    def from_transmute_dict(model):
         return Card(model["name"], model["decription"])
 
 
@@ -51,7 +51,7 @@ class Deck(object):
     # modify data. adding updtate ensures
     # the request will be a POST
     @flask_transmute.updates
-    def add_card(self, body: Card):
+    def add_card(self, card: Card):
         """ add a card to the deck """
         if len(card.name) > 100:
             raise DeckException(
