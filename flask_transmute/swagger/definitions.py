@@ -47,16 +47,20 @@ class Definitions(object):
         else:
             model = model_or_cls
 
-        properties = {}
-        for name, prop_cls in model.items():
-            properties[name] = self.get(prop_cls)
-
-        schema = {
-            "type": "object",
-            "properties": properties
-        }
+        schema = self._expand_schema(model)
         self._definitions[model_or_cls] = schema
         return schema
+
+    def _expand_schema(self, schema):
+        properties = {}
+        for property_name, details in schema["properties"].items():
+            properties[property_name] = self.get(details["type"])
+
+        return {
+            "type": "object",
+            "properties": properties,
+            "required": schema["required"]
+        }
 
 
 class ModelDict(dict):

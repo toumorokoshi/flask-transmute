@@ -1,4 +1,5 @@
 from .utils import SWAGGER_TYPEMAP
+from ..function import NoDefault
 
 
 class Paths(object):
@@ -37,9 +38,13 @@ class Paths(object):
             # in the case of updates or creates, we spec this by
             # specifying all values are passed into the body.
             param_spec = {"name": "body", "in": "body", "required": True}
-            model = {}
+            properties = {}
+            required = []
             for arg_name, arg_info in transmute_func.arguments.items():
-                model[arg_name] = arg_info.type
+                properties[arg_name] = {"type": arg_info.type}
+                if arg_info.default is NoDefault:
+                    required.append(arg_name)
+            model = {"properties": properties, "required": required}
             param_spec["schema"] = self._definitions.get(model)
             path_spec["parameters"].append(param_spec)
 

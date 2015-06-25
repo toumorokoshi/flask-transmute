@@ -79,12 +79,14 @@ def _get_responses(return_type):
     return {
         200: {
             "description": "success",
-            "return_type": {"success": bool,
-                            "result": return_type}
+            "return_type": {"properties": {"success": {"type": bool},
+                                           "result": {"type": return_type}},
+                            "required": ["success", "result"]}
         },
         400: {
             "description": "invalid input received",
-            "return_type": {"success": bool,
-                            "message": str}
+            "return_type": {"properties": {"success": {"type": bool},
+                                           "message": {"type": str}},
+                            "required": ["success", "message"]}
         }
     }
