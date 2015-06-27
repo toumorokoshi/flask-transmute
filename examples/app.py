@@ -44,7 +44,7 @@ class Card(object):
 class Deck(object):
 
     def __init__(self):
-        self._cards = [Card("foo", "bar")]
+        self._cards = [Card("foo", "bar"), Card("round", "two")]
 
     # the update decorator tells
     # flask-transmute that this method will

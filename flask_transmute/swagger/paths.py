@@ -1,4 +1,3 @@
-from .utils import SWAGGER_TYPEMAP
 from ..function import NoDefault
 
 

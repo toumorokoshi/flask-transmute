@@ -9,7 +9,7 @@ def class_is_serializable(cls):
 
     if not from_dict or not isinstance(from_dict, types.FunctionType):
         raise SerializerException(
-            "expected from_dict for {0} to be exist and be a function!".format(cls))
+            "expected from_transmute_dict for {0} to exist and be a function!".format(cls))
 
     schema = getattr(cls, "transmute_schema", None)
     validate_schema(schema)
@@ -27,7 +27,7 @@ def generate_class_serializer(cls, serializers):
         @staticmethod
         def serialize(obj):
             data = {}
-            for attr_name, attr_details in schema.items():
+            for attr_name, attr_details in schema["properties"].items():
                 serializer = serializers[attr_details["type"]]
                 value = getattr(obj, attr_name)
                 data[attr_name] = serializer.serialize(value)
