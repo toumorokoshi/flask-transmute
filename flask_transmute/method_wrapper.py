@@ -74,12 +74,12 @@ def _add_request_parameters_to_args(arguments, request_args, arg_dict):
             else:
                 continue
         try:
-            convert_type = get_serializer(info.type)
+            serializer = get_serializer(info.type)
             if isinstance(info.type, list):
                 value = request_args.getlist(argument)
             else:
                 value = request_args.get(argument)
-            value = convert_type(value)
+            value = serializer.deserialize(value)
 
         except SerializerException as e:
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))

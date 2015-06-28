@@ -38,7 +38,7 @@ class Card(object):
     # object to a class instance.
     @staticmethod
     def from_transmute_dict(model):
-        return Card(model["name"], model["decription"])
+        return Card(model["name"], model["description"])
 
 
 class Deck(object):
@@ -51,14 +51,14 @@ class Deck(object):
     # modify data. adding updtate ensures
     # the request will be a POST
     @flask_transmute.updates
-    def add_card(self, card: Card):
+    def add_card(self, card: Card) -> Card:
         """ add a card to the deck """
         if len(card.name) > 100:
             raise DeckException(
                 "the name is too long! must be under 100 characters."
             )
         self._cards += [card]
-        return {"card": card}
+        return card
 
     def cards(self) -> [Card]:
         """ retrieve all cards from the deck """
