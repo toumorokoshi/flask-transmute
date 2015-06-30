@@ -100,11 +100,3 @@ def _extract_and_convert_args(arguments, request_args):
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))
         kwargs[argument] = value
     return kwargs
-
-
-def _request_wants_json():
-    best = request.accept_mimetypes \
-        .best_match(['application/json', 'text/html'])
-    return best == 'application/json' and \
-        request.accept_mimetypes[best] > \
-        request.accept_mimetypes['text/html']

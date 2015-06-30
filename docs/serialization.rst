@@ -17,16 +17,15 @@ objects instead of strings to define types:
 
 .. code:: python
 
-   class Deck(object):
-      transmute_schema = {
-          "properties": {
-              "cards": {
-                "type": [Card]
-              }
-              "name": {"type": str}
-          },
-          "required": ["name"]
-      }
+    transmute_schema = {
+        "properties": {
+            "cards": {
+              "type": [Card]
+            }
+            "name": {"type": str}
+        },
+        "required": ["name"]
+    }
 
 
 The following types may be used:

@@ -154,7 +154,22 @@ html_static_path = ['_static']
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'searchbox.html',
+    ]
+}
+
+html_theme_options = {
+    'description': 'a flask extension that generates APIs from python function and classes.',
+    'logo_name': True,
+    'github_user': 'toumorokoshi',
+    'github_repo': 'flask-transmute',
+    'sidebar_width': '260px',
+    'page_width': '980px',
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
