@@ -28,12 +28,12 @@ def deletes(f):
 def annotate(annotations):
     """
     in python2, native annotions on parameters do not exist:
-    def foo(a : str, b: int):
+    def foo(a : str, b: int) -> bool:
         ...
 
     this provides a way to provide attribute annotations:
 
-    @annotate({"a": str, "b": int})
+    @annotate({"a": str, "b": int, "return": bool})
     def foo(a, b):
         ...
     """

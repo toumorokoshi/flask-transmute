@@ -128,6 +128,7 @@ Contents:
    :maxdepth: 2
 
    autodocumentation
+   decorators
    serialization
 
 
