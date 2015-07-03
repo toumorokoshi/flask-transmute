@@ -2,3 +2,4 @@ develop-eggs:
   - .
 eggs:
   jedi: null
+  sphinx: null
