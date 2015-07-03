@@ -64,15 +64,21 @@ class Deck(object):
         """ retrieve all cards from the deck """
         return self._cards
 
-deck = Deck()
 app = Flask(__name__)
+deck = Deck()
+
+route_set = flask_transmute.FlaskRouteSet()
+route_set.route_object('/deck', deck,
+                       # if exceptions are added to error_exceptions,
+                       # they will be caught and raise a success: false
+                       # response, with the error message being the message
+                       # of the exception
+                       error_exceptions=[DeckException])
 swagger = Swagger("myApi", "1.0")
-flask_transmute.autoroute(app, '/deck', deck,
-                          # if exceptions are added to error_exceptions,
-                          # they will be caught and raise a success: false
-                          # response, with the error message being the message
-                          # of the exception
-                          error_exceptions=[DeckException])
+route_set.add_extension(swagger)
+
+route_set.init_app(app)
 swagger.init_app(app)
+
 app.debug = True
 app.run()

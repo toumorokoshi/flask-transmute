@@ -14,6 +14,8 @@ class TransmuteFunction(object):
     automatic documentation)
     """
 
+    params = ["error_exceptions"]
+
     def __init__(self, func, error_exceptions=None):
         # arguments should be the arguments passed into
         # the function

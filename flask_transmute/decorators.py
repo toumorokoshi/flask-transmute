@@ -1,6 +1,3 @@
-from .autoroute import autoroute_function
-
-
 def updates(f):
     """
     this labels a function as one that updates data.
@@ -41,15 +38,5 @@ def annotate(annotations):
     def decorate(func):
         func.__annotations__ = annotations
         return func
-
-    return decorate
-
-
-def route(router, path, **options):
-
-    def decorate(func):
-        autoroute_function(
-            router, path, func, **options
-        )
 
     return decorate

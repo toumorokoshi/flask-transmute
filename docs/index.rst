@@ -131,11 +131,9 @@ Contents:
    decorators
    serialization
 
-.. automodule:: flask_transmute
-   :members:
-
 .. automodule:: flask_transmute.decorators
    :members:
+
 
 
 Indices and tables
