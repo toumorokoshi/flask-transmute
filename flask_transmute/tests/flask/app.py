@@ -44,7 +44,7 @@ class Card(object):
 class Deck(object):
 
     def __init__(self):
-        self._cards = [Card("foo", "bar"), Card("round", "two")]
+        self._cards = []
 
     # the update decorator tells
     # flask-transmute that this method will
@@ -64,6 +64,9 @@ class Deck(object):
         """ retrieve all cards from the deck """
         return self._cards
 
+    def reset(self):
+        self._cards = []
+
 app = Flask(__name__)
 deck = Deck()
 
@@ -81,4 +84,3 @@ route_set.init_app(app)
 # swagger.init_app(app)
 
 app.debug = True
-app.run()

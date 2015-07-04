@@ -1,11 +1,11 @@
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
-from .routing import route_transmute_func
 from .function import TransmuteFunction
 from .utils import get_public_callables
 
 
 RouteConfig = namedtuple("RouteConfig", ["path", "transmute_func"])
+
 
 class RouteSet(object):
     """
@@ -20,7 +20,6 @@ class RouteSet(object):
     # through to the framework's routing mechanism.
     transmute_params = TransmuteFunction.params
 
-
     # abstract methods (must be overriden)
     @abstractmethod
     def add_route_to_app(self, *args, **kwargs):
@@ -34,6 +33,8 @@ class RouteSet(object):
     # other methods that may be worth overriding
     def init_app(self, *args, **kwargs):
         for extension in self._extensions:
+            extension.init_app(self, *args, **kwargs)
+
 
     # route function
     def route_function(self, path, function, **options):
@@ -65,8 +66,7 @@ class RouteSet(object):
         self._routes = []
         self._extensions = []
 
-
     def route_object(self, path, obj, **options):
-        for method_name, func in get_public_callables(object_to_route):
+        for method_name, func in get_public_callables(obj):
             func_path = "{0}/{1}".format(path, method_name)
             self.route_function(func_path, func)

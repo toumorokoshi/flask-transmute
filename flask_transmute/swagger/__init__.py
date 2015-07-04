@@ -66,7 +66,7 @@ class Swagger(object):
         self._restplus_apidoc = copy.deepcopy(apidoc)
         self._route_prefix = route_prefix
 
-    def init_app(self, route_set):
+    def init_app(self, app):
         swagger_json = self._generate_swagger_json(app)
         swagger_route = self._route_prefix + "swagger.json"
         swagger_ui_route = self._route_prefix

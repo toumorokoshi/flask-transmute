@@ -1,5 +1,6 @@
 from ..routeset import RouteSet
 from .method_wrapper import wrap_method
+from ..function import TransmuteFunction
 
 
 class FlaskRouteSet(RouteSet):
@@ -21,12 +22,26 @@ class FlaskRouteSet(RouteSet):
                                                   **transmute_options)
 
 
-def _route_transmute_func(router, path, vf):
+def _route_transmute_func(router, path, transmute_func, **options):
     method = "GET"
-    if vf.creates:
+    if transmute_func.creates:
         method = "PUT"
-    elif vf.deletes:
+    elif transmute_func.deletes:
         method = "DELETE"
-    elif vf.updates:
+    elif transmute_func.updates:
         method = "POST"
-    router.route(path, methods=[method])(wrap_method(vf))
+    return router.route(path, methods=[method], **options)(wrap_method(transmute_func))
+
+
+# to accomodate a more flask-like syntax, you can decorate a single
+# method, a la flask.
+def route(router, path, **options):
+
+    transmute_options, flask_options = \
+        FlaskRouteSet._split_options_dict(options)
+
+    def decorator(func):
+        transmute_func = TransmuteFunction(func, **transmute_options)
+        return _route_transmute_func(router, path, transmute_func, **flask_options)
+
+    return decorator
