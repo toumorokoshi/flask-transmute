@@ -9,3 +9,5 @@ lib64/
 dist/
 .Python
 docs/_build
+.coverage
+flask_transmute/swagger-ui

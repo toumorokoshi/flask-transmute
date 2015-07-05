@@ -75,10 +75,10 @@ route_set.route_object('/deck', deck,
                        # of the exception
                        error_exceptions=[DeckException])
 swagger = Swagger("myApi", "1.0")
-route_set.add_extension(swagger)
 
 route_set.init_app(app)
 swagger.init_app(app)
 
 app.debug = True
+import pdb; pdb.set_trace()
 app.run()

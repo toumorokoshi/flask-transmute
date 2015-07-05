@@ -1,6 +1,18 @@
 develop-eggs:
   - .
+phases:
+  after-eggs: ['download_swagger_ui', 'test']
 eggs:
   jedi: null
   sphinx: null
   pytest: null
+  pytest-cov: null
+  # we use requests for the scripts
+  requests: null
+parts:
+  test:
+    _plugin: uranium.plugin.shell
+    script: "./bin/py.test --cov flask_transmute flask_transmute/tests"
+    name: test
+  download_swagger_ui:
+    _script: "uscripts/download_swagger_ui.py"

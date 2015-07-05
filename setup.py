@@ -23,6 +23,7 @@ setup(name='flask-transmute',
       author_email='yusuke@tsutsumi.io',
       url='',
       packages=find_packages(),
+      package_data={"flask_transmute": ["swagger-ui/*"]},
       install_requires=install_requires,
       classifiers=[
           'Development Status :: 3 - Alpha',
