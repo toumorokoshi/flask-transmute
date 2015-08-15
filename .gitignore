@@ -11,3 +11,4 @@ dist/
 docs/_build
 .coverage
 flask_transmute/swagger-ui
+.pydistutils.cfg
