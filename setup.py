@@ -11,6 +11,7 @@ install_requires = [
     # we're using restplus because it has a nicely bundled
     # set of statics for swagger.
     'flask-restplus',
+    'tornado',
 ]
 
 tests_require = []
