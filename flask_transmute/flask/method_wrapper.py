@@ -3,32 +3,29 @@ import functools
 from flask import jsonify, request
 from ..serializers import get_serializer, SerializerException
 from ..function import NoDefault
+from ..exceptions import ApiException
 
 
-class ApiException(Exception):
-    """ raising this will return a "success": false with some details """
-
-
-def wrap_method(voodoo_function):
+def wrap_method(transmute_function):
     """
     this handles the conversion of a function
     that returns arbitrary functionality into
     """
-    vf = voodoo_function
+    tf = transmute_function
 
-    is_post_method = vf.creates or vf.updates
+    is_post_method = tf.creates or tf.updates
     api_exceptions = tuple(
-        list(vf.error_exceptions or []) + [ApiException]
+        list(tf.error_exceptions or []) + [ApiException]
     )
-    args_not_empty = len(vf.arguments) > 0
-    result_serializer = get_serializer(vf.return_type)
+    args_not_empty = len(tf.arguments) > 0
+    result_serializer = get_serializer(tf.return_type)
 
-    @functools.wraps(vf.raw_func)
+    @functools.wraps(tf.raw_func)
     def wrapper_func(*args, **kwargs):
         try:
             request_params = _retrieve_request_params(args_not_empty, is_post_method)
-            _add_request_parameters_to_args(vf.arguments, request_params, kwargs)
-            result = vf.raw_func(*args, **kwargs)
+            _add_request_parameters_to_args(tf.arguments, request_params, kwargs)
+            result = tf.raw_func(*args, **kwargs)
         except Exception as e:
             if api_exceptions is not None and isinstance(e, api_exceptions):
                 return jsonify({

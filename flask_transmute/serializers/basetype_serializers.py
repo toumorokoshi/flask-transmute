@@ -31,7 +31,7 @@ class BoolSerializer(object):
             return data
 
         if not isinstance(data, str):
-            msg = "unable to interpret dataect of type {0} as a bool"
+            msg = "unable to interpret data of type {0} as a bool"
             raise SerializationException(msg.format(type(data).__name__))
 
         data = data.lower()
@@ -46,14 +46,11 @@ class StringSerializer(object):
 
     @staticmethod
     def deserialize(data):
-        if isinstance(data, bool):
-            return data
         if not isinstance(data, str):
-            msg = "unable to interpret dataect of type {0} as a bool"
+            msg = "unable to interpret data of type {0} as a string"
             raise SerializationException(
                 msg.format(type(data).__name__))
-        data = data.lower()
-        return data.startswith("t") or data.startswith("y")
+        return data
 
 
 class NoneSerializer(object):
