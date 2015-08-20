@@ -1,5 +1,6 @@
 import inspect
 
+
 def get_public_callables(obj):
     """
     return an iterator over all public callables of a function
@@ -17,3 +18,13 @@ def get_raw_function(func):
         return func.__func__
     else:
         return func
+
+
+def join_url_paths(*parts):
+    path = parts[0]
+    for p in parts[1:]:
+        if path == "":
+            path = p
+        else:
+            path = "{0}/{1}".format(path.rstrip("/"), p)
+    return path

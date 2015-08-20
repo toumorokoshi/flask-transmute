@@ -1,6 +1,7 @@
 from ..routeset import RouteSet
 from .method_wrapper import wrap_method
 from ..function import TransmuteFunction
+from ..utils import join_url_paths
 
 
 class FlaskRouteSet(RouteSet):
@@ -9,11 +10,13 @@ class FlaskRouteSet(RouteSet):
         self._route_options = {}
         super(FlaskRouteSet, self).__init__(*args, **kwargs)
 
-    def init_app(self, app):
+    def init_app(self, app, path=""):
         for route_config in self._routes:
             _route_transmute_func(app,
-                                  route_config.path,
+                                  join_url_paths(path, route_config.path),
                                   route_config.transmute_func)
+        for path, route_set in self._route_set_pairs:
+            route_set.init_app(app, path=path)
 
     def route_function(self, path, function, **options):
         transmute_options, flask_options = self._split_options_dict(options)

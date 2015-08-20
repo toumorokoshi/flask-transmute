@@ -35,12 +35,23 @@ class RouteSet(object):
         for extension in self._extensions:
             extension.init_app(self, *args, **kwargs)
 
-
     # route function
     def route_function(self, path, function, **options):
         transmute_func = TransmuteFunction(function, **options)
         route_config = RouteConfig(path, transmute_func)
         self._routes.append(route_config)
+
+    def route(self, path, **options):
+        """
+        to accomodate a more flask-like syntax, you can decorate a single
+        method
+        """
+
+        def decorator(func):
+            self.route_function(path, func, **options)
+            return func
+
+        return decorator
 
     @classmethod
     def _split_options_dict(cls, options_dict):
@@ -65,6 +76,7 @@ class RouteSet(object):
     def __init__(self):
         self._routes = []
         self._extensions = []
+        self._route_set_pairs = []
 
     def route_object(self, path, obj, **options):
         for method_name, func in get_public_callables(obj):
