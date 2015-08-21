@@ -26,5 +26,5 @@ def join_url_paths(*parts):
         if path == "":
             path = p
         else:
-            path = "{0}/{1}".format(path.rstrip("/"), p)
+            path = "{0}/{1}".format(path.rstrip("/"), p.lstrip("/"))
     return path

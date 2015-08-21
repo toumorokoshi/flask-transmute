@@ -14,7 +14,6 @@ class Paths(object):
             endpoint = rule.endpoint
             func = app.view_functions[endpoint]
             if hasattr(func, "transmute_func"):
-
                 if path not in self._paths:
                     self._paths[path] = {}
 
@@ -51,7 +50,7 @@ class Paths(object):
             for arg_name, arg_info in transmute_func.arguments.items():
                 param_spec = {
                     "name": arg_name,
-                    "required": arg_info.default is None,
+                    "required": arg_info.default is not None,
                     "in": "query"
                 }
                 type_definition = self._definitions.get(arg_info.type)

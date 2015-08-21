@@ -5,6 +5,7 @@ from .utils import get_public_callables
 
 
 RouteConfig = namedtuple("RouteConfig", ["path", "transmute_func"])
+SubRouteSet = namedtuple("SubRouteSet", ["path", "route_set"])
 
 
 class RouteSet(object):
@@ -20,18 +21,15 @@ class RouteSet(object):
     # through to the framework's routing mechanism.
     transmute_params = TransmuteFunction.params
 
-    # abstract methods (must be overriden)
-    @abstractmethod
-    def add_route_to_app(self, *args, **kwargs):
-        """
-        this is the only method that needs to be overriden. all the parameters
-        required to add routes should be passed in, and at the end the application
-        should have the desired routes attached.
-        """
-        pass
+    def add_route_set(self, path, route_set):
+        self._route_set_pairs.append(SubRouteSet(path, route_set))
 
     # other methods that may be worth overriding
     def init_app(self, *args, **kwargs):
+
+        for subroute_set in self._route_set_pairs:
+            subroute_set.init_app(*args, **kwargs)
+
         for extension in self._extensions:
             extension.init_app(self, *args, **kwargs)
 
