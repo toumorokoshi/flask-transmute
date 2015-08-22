@@ -22,3 +22,8 @@ def getfullargspec(func):
             argspec.keywords, argspec.defaults,
             [], None, annotations
         )
+
+if is_py3:
+    string_type = str
+else:
+    string_type = basestring

@@ -1,4 +1,5 @@
 from .exceptions import SerializationException
+from ..compat import string_type
 
 
 class IntSerializer(object):
@@ -30,7 +31,7 @@ class BoolSerializer(object):
         if isinstance(data, bool):
             return data
 
-        if not isinstance(data, str):
+        if not isinstance(data, string_type):
             msg = "unable to interpret data of type {0} as a bool"
             raise SerializationException(msg.format(type(data).__name__))
 
@@ -46,7 +47,7 @@ class StringSerializer(object):
 
     @staticmethod
     def deserialize(data):
-        if not isinstance(data, str):
+        if not isinstance(data, string_type):
             msg = "unable to interpret data of type {0} as a string"
             raise SerializationException(
                 msg.format(type(data).__name__))

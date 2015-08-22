@@ -1,5 +1,7 @@
+from ..compat import string_type
+
 SWAGGER_TYPEMAP = {
-    str: "string",
+    string_type: "string",
     int: "integer",
     bool: "boolean",
     list: "array",

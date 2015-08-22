@@ -15,18 +15,18 @@ class Definitions(object):
         if isinstance(model_or_cls, dict):
             return self._get_reference(model_or_cls)
 
-        elif isinstance(model_or_cls, list):
+        if isinstance(model_or_cls, list):
             return {
                 "type": "array",
                 "items": self.get(model_or_cls[0]),
                 "collectionFormat": "multi"
             }
 
-        elif model_or_cls in SWAGGER_TYPEMAP:
-            return {"type": SWAGGER_TYPEMAP[model_or_cls]}
+        for typ, typ_name in SWAGGER_TYPEMAP.items():
+            if issubclass(model_or_cls, typ):
+                return {"type": typ_name}
 
-        else:
-            return self._get_reference(model_or_cls)
+        return self._get_reference(model_or_cls)
 
     def add_to_spec(self, spec):
         """ add definitions to the swagger spec """
