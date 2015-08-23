@@ -16,6 +16,7 @@ from .basetype_serializers import (
 _SERIALIZER_CACHE = {
     bool: BoolSerializer,
     type(None): NoneSerializer,
+    None: NoneSerializer,
     int: IntSerializer,
     str: StringSerializer
 }

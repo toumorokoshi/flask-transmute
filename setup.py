@@ -17,7 +17,7 @@ install_requires = [
 tests_require = []
 
 setup(name='flask-transmute',
-      version='0.2.1',
+      version='0.2.3',
       description='a flask plugin to generate routes from objects.',
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',

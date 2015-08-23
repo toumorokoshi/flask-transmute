@@ -48,7 +48,7 @@ def _retrieve_request_params(args_not_empty, is_post_method):
     if not is_post_method:
         request_args = request.args
     else:
-        if "json" in request.content_type:
+        if (not request.content_type or "json" in request.content_type) and request.get_data():
             try:
                 request_args = json.loads(request.get_data().decode("UTF-8"))
                 if not isinstance(request_args, dict) and args_not_empty:
