@@ -1,3 +1,4 @@
+import json
 import pytest
 import flask_transmute
 from flask import Flask
@@ -24,3 +25,6 @@ def app():
 def test_bad_argument(app):
     """ a bad argument should return a success: false. """
     resp = app.get("/test")
+    assert resp.status_code == 400
+    resp_json = json.loads(resp.get_data().decode())
+    assert not resp_json["success"]

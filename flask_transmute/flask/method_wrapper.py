@@ -31,7 +31,7 @@ def wrap_method(transmute_function):
                 return jsonify({
                     "success": False,
                     "detail": str(e)
-                })
+                }), 400
             else:
                 raise
 

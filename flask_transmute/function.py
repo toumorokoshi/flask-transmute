@@ -4,7 +4,17 @@ from .compat import getfullargspec
 
 
 ArgumentInfo = namedtuple("ArgumentInfo", ["default", "type"])
-NoDefault = object()
+
+
+class NoDefault(object):
+
+    def __str__(self):
+        return "NoDefault"
+
+    def __repr__(self):
+        return "NoDefault"
+
+NoDefault = NoDefault()
 
 
 class TransmuteFunction(object):
