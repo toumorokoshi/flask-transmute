@@ -8,6 +8,7 @@ from .basetype_serializers import (
     BoolSerializer,
     NoneSerializer,
     IntSerializer,
+    FloatSerializer,
     StringSerializer
 )
 
@@ -18,6 +19,7 @@ _SERIALIZER_CACHE = {
     type(None): NoneSerializer,
     None: NoneSerializer,
     int: IntSerializer,
+    float: FloatSerializer,
     str: StringSerializer
 }
 

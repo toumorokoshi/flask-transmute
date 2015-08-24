@@ -20,6 +20,24 @@ class IntSerializer(object):
                 "unable to interpret {0} as an int.".format(str(data)))
 
 
+class FloatSerializer(object):
+
+    @staticmethod
+    def serialize(obj):
+        return obj
+
+    @staticmethod
+    def deserialize(data):
+        if isinstance(data, float):
+            return data
+
+        try:
+            return float(data)
+        except ValueError:
+            raise SerializationException(
+                "unable to interpret {0} as an float.".format(str(data)))
+
+
 class BoolSerializer(object):
 
     @staticmethod

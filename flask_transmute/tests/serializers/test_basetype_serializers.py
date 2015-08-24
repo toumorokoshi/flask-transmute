@@ -1,5 +1,10 @@
 import pytest
-from flask_transmute.serializers import BoolSerializer, IntSerializer, StringSerializer
+from flask_transmute.serializers import (
+    BoolSerializer,
+    FloatSerializer,
+    IntSerializer,
+    StringSerializer
+)
 from flask_transmute.serializers import SerializerException
 
 
@@ -18,6 +23,23 @@ def test_int_deserializer_unhappy(unhappy_input):
     """ test all unhappy cases for the integer serializer """
     with pytest.raises(SerializerException):
         IntSerializer.deserialize(unhappy_input)
+
+
+@pytest.mark.parametrize("inp, expected_output", [
+    ("10", 10), ("1.0", 1.0)
+])
+def test_float_deserializer_happy(inp, expected_output):
+    """ test all happy cases for the integer serializer """
+    assert FloatSerializer.deserialize(inp) == expected_output
+
+
+@pytest.mark.parametrize("unhappy_input", [
+    "foo", "bar"
+])
+def test_float_deserializer_unhappy(unhappy_input):
+    """ test all unhappy cases for the integer serializer """
+    with pytest.raises(SerializerException):
+        FloatSerializer.deserialize(unhappy_input)
 
 
 @pytest.mark.parametrize("inp, expected_output", [
