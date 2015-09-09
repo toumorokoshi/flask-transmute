@@ -11,10 +11,12 @@ python functions and classes. Autodocumention is also provided via `swagger <htt
 
 Here's a brief example:
 
-.. code:: python
+.. code-block:: python
 
     import flask_transmute
     from flask import Flask
+
+    route_set = flask_transmute.FlaskRouteSet()
 
     class Pet(object):
 
@@ -34,6 +36,7 @@ Here's a brief example:
         def from_transmute_dict(model):
             return Pet(model["name"], model["classification"])
 
+    @route_set.route("/add_pet")
     @flask_transmute.updates
     # python 2 doesn't support parameter annotations.
     # instead, you can do
@@ -43,9 +46,7 @@ Here's a brief example:
         return pet
 
     app = Flask(__name__)
-    flask_transmute.autoroute_function(
-        app, "/add_pet", add_pet
-    )
+    route_set.init_app(app)
 
 The example above creates a path /add_pet that:
 
@@ -58,7 +59,7 @@ https://github.com/toumorokoshi/flask-transmute/blob/master/examples/deck.py
 
 In raw flask, the above is equivalent to:
 
-.. code:: python
+.. code-block:: python
 
     import json
     from flask import Flask, jsonify, request
@@ -130,11 +131,6 @@ Contents:
    autodocumentation
    decorators
    serialization
-
-.. automodule:: flask_transmute.decorators
-   :members:
-
-
 
 Indices and tables
 ==================

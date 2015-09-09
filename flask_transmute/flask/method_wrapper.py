@@ -81,19 +81,3 @@ def _add_request_parameters_to_args(arguments, request_args, arg_dict):
         except SerializerException as e:
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))
         arg_dict[argument] = value
-
-
-def _extract_and_convert_args(arguments, request_args):
-    kwargs = {}
-    for argument, info in arguments.items():
-        if argument not in request_args:
-            if info.default is NoDefault:
-                raise ApiException("parameter {0} is required".format(argument))
-            else:
-                continue
-        try:
-            value = get_serializer(info.type).deserialize(request_args[argument])
-        except SerializerException as e:
-            raise ApiException("parameter {0}: {1}".format(argument, str(e)))
-        kwargs[argument] = value
-    return kwargs

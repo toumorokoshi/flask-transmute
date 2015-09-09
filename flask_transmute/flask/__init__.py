@@ -34,17 +34,3 @@ def _route_transmute_func(router, path, transmute_func, **options):
     elif transmute_func.updates:
         method = "POST"
     return router.route(path, methods=[method], **options)(wrap_method(transmute_func))
-
-
-# to accomodate a more flask-like syntax, you can decorate a single
-# method, a la flask.
-def route(router, path, **options):
-
-    transmute_options, flask_options = \
-        FlaskRouteSet._split_options_dict(options)
-
-    def decorator(func):
-        transmute_func = TransmuteFunction(func, **transmute_options)
-        return _route_transmute_func(router, path, transmute_func, **flask_options)
-
-    return decorator

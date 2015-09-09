@@ -3,6 +3,7 @@ from flask_transmute.serializers import (
     BoolSerializer,
     FloatSerializer,
     IntSerializer,
+    NoneSerializer,
     StringSerializer
 )
 from flask_transmute.serializers import SerializerException
@@ -73,3 +74,19 @@ def test_string_deserializer_unhappy(unhappy_input):
     """ test all unhappy cases for the integer serializer """
     with pytest.raises(SerializerException):
         StringSerializer.deserialize(unhappy_input)
+
+
+@pytest.mark.parametrize("inp, expected_output", [
+    (None, None)
+])
+def test_none_deserializer_happy(inp, expected_output):
+    assert NoneSerializer.deserialize(inp) is expected_output
+
+
+@pytest.mark.parametrize("unhappy_input", [
+    -1,
+])
+def test_none_deserializer_unhappy(unhappy_input):
+    """ test all unhappy cases for the integer serializer """
+    with pytest.raises(SerializerException):
+        NoneSerializer.deserialize(unhappy_input)

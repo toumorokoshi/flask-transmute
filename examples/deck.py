@@ -80,5 +80,4 @@ route_set.init_app(app)
 swagger.init_app(app)
 
 app.debug = True
-import pdb; pdb.set_trace()
 app.run()
