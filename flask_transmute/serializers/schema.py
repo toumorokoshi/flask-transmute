@@ -3,7 +3,7 @@ from .exceptions import InvalidSchema
 
 def validate_schema(schema):
     """ validate that the schema is a valid transmute schema """
-    required_keys = ["properties", "required"]
+    required_keys = ["properties"]
 
     errors = []
     for key in required_keys:
