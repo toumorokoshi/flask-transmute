@@ -1,4 +1,5 @@
 import json
+import yaml
 import pytest
 from conftest import create_test_app
 
@@ -49,6 +50,22 @@ def test_route_with_no_type_hints_argument():
 
     test_app = create_test_app("/foo", return_input_string)
     assert json.loads(test_app.get("/foo?input_string=testme").data.decode("UTF-8")) == {
+        "success": True,
+        "result": "testme"
+    }
+
+
+def test_route_yaml():
+
+    def return_input_string(input_string):
+        return input_string
+
+    test_app = create_test_app("/foo", return_input_string)
+    resp = test_app.get("/foo?input_string=testme", headers={
+        "content-type": "application/yaml"
+    })
+    assert "success: true" in resp.data.decode("UTF-8")
+    assert yaml.load(resp.data.decode("UTF-8")) == {
         "success": True,
         "result": "testme"
     }

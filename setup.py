@@ -12,12 +12,13 @@ install_requires = [
     # set of statics for swagger.
     'flask-restplus',
     'tornado',
+    'pyyaml',
 ]
 
 tests_require = []
 
 setup(name='flask-transmute',
-      version='0.2.3',
+      version='0.2.4',
       description='a flask plugin to generate routes from objects.',
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',

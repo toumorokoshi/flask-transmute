@@ -1,6 +1,7 @@
 import json
+import yaml
 import functools
-from flask import jsonify, request
+from flask import jsonify, request, current_app
 from ..serializers import get_serializer, SerializerException
 from ..function import NoDefault
 from ..exceptions import ApiException
@@ -28,15 +29,15 @@ def wrap_method(transmute_function):
             result = tf.raw_func(*args, **kwargs)
         except Exception as e:
             if api_exceptions is not None and isinstance(e, api_exceptions):
-                return jsonify({
+                return _return({
                     "success": False,
                     "detail": str(e)
-                }), 400
+                }, status_code=400)
             else:
                 raise
 
         result = result_serializer.serialize(result)
-        return jsonify({
+        return _return({
             "success": True,
             "result": result
         })
@@ -81,3 +82,16 @@ def _add_request_parameters_to_args(arguments, request_args, arg_dict):
         except SerializerException as e:
             raise ApiException("parameter {0}: {1}".format(argument, str(e)))
         arg_dict[argument] = value
+
+
+def _return(data, status_code=200):
+    content_type = request.content_type or "application/json"
+    if "yaml" in content_type:
+        return current_app.response_class(
+            yaml.dump(data, default_flow_style=False),
+            mimetype='application/x-yaml'
+        ), status_code
+    if "json" in content_type:
+        return jsonify(data), status_code
+    else:
+        return jsonify(data), status_code
