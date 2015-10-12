@@ -79,4 +79,4 @@ class RouteSet(object):
     def route_object(self, path, obj, **options):
         for method_name, func in get_public_callables(obj):
             func_path = "{0}/{1}".format(path, method_name)
-            self.route_function(func_path, func)
+            self.route_function(func_path, func, **options)

@@ -6,7 +6,11 @@ class IntSerializer(object):
 
     @staticmethod
     def serialize(obj):
-        return obj
+        try:
+            return int(obj)
+        except ValueError:
+            raise SerializationException(
+                "unable to interpret {0} as an int.".format(str(obj)))
 
     @staticmethod
     def deserialize(data):
