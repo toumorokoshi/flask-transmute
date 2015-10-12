@@ -16,7 +16,7 @@ def wrap_method(transmute_function):
 
     is_post_method = tf.creates or tf.updates
     api_exceptions = tuple(
-        list(tf.error_exceptions or []) + [ApiException]
+        list(tf.error_exceptions or []) + [ApiException, SerializerException]
     )
     args_not_empty = len(tf.arguments) > 0
     result_serializer = get_serializer(tf.return_type)
@@ -27,6 +27,11 @@ def wrap_method(transmute_function):
             request_params = _retrieve_request_params(args_not_empty, is_post_method)
             _add_request_parameters_to_args(tf.arguments, request_params, kwargs)
             result = tf.raw_func(*args, **kwargs)
+            result = result_serializer.serialize(result)
+            return _return({
+                "success": True,
+                "result": result
+            })
         except Exception as e:
             if api_exceptions is not None and isinstance(e, api_exceptions):
                 return _return({
@@ -35,12 +40,6 @@ def wrap_method(transmute_function):
                 }, status_code=400)
             else:
                 raise
-
-        result = result_serializer.serialize(result)
-        return _return({
-            "success": True,
-            "result": result
-        })
 
     return wrapper_func
 
