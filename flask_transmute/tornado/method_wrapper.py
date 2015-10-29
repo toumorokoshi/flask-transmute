@@ -19,7 +19,7 @@ def wrap_method(transmute_function):
         try:
             pass
         except Exception as e:
-            if api_exceptions and is not None and isinstance(e, api_exceptions):
+            if api_exceptions and isinstance(e, api_exceptions):
                 self.write(json.dumps({
                     "success": True,
                     "detail": str(e)
