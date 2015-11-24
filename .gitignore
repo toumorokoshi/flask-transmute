@@ -13,3 +13,4 @@ docs/_build
 flask_transmute/swagger-ui
 .pydistutils.cfg
 *~
+.cache

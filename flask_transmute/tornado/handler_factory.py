@@ -55,6 +55,6 @@ def _add_transmute_func_to_handler(transmute_func, handler):
 def _generate_handler_method(transmute_func):
 
     def method(self):
-        self.write(transmute_func.description)
+        self.write({})
 
     return method
