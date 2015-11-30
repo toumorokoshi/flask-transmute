@@ -1,6 +1,7 @@
 import tornado.testing
 import tornado.web
 import flask_transmute
+import json
 
 
 class TestApp(tornado.testing.AsyncHTTPTestCase):
@@ -11,6 +12,7 @@ class TestApp(tornado.testing.AsyncHTTPTestCase):
     def test_app(self):
         response = self.fetch("/")
         assert response.code == 200
+
 
 
 def _get_route_set():
