@@ -1,8 +1,8 @@
 import json
-import yaml
 import functools
 from flask import jsonify, request, current_app
-from ..serializers import get_serializer, SerializerException
+from marshmallow import ValidationError
+from web_transmute import serializers, contenttype_serializers
 from ..function import NoDefault
 from ..exceptions import ApiException
 
@@ -14,20 +14,20 @@ def wrap_method(transmute_function):
     """
     tf = transmute_function
 
-    is_post_method = tf.creates or tf.updates
+    is_body_method = any(tf.http_methods & set(["POST", "PUT"]))
     api_exceptions = tuple(
-        list(tf.error_exceptions or []) + [ApiException, SerializerException]
+        list(tf.error_exceptions or []) + [ApiException, ValidationError]
     )
     args_not_empty = len(tf.arguments) > 0
-    result_serializer = get_serializer(tf.return_type)
+    result_serializer = serializers[tf.return_type]
 
     @functools.wraps(tf.raw_func)
     def wrapper_func(*args, **kwargs):
         try:
-            request_params = _retrieve_request_params(args_not_empty, is_post_method)
+            request_params = _retrieve_request_params(args_not_empty, is_body_method)
             _add_request_parameters_to_args(tf.arguments, request_params, kwargs)
             result = tf.raw_func(*args, **kwargs)
-            result = result_serializer.serialize(result)
+            result = result_serializer.dump(result)
             return _return({
                 "success": True,
                 "result": result
@@ -44,8 +44,8 @@ def wrap_method(transmute_function):
     return wrapper_func
 
 
-def _retrieve_request_params(args_not_empty, is_post_method):
-    if not is_post_method:
+def _retrieve_request_params(args_not_empty, is_body_method):
+    if not is_body_method:
         request_args = request.args
     else:
         if (not request.content_type or "json" in request.content_type) and request.get_data():
@@ -84,13 +84,7 @@ def _add_request_parameters_to_args(arguments, request_args, arg_dict):
 
 
 def _return(data, status_code=200):
-    content_type = request.content_type or "application/json"
-    if "yaml" in content_type:
-        return current_app.response_class(
-            yaml.dump(data, default_flow_style=False),
-            mimetype='application/x-yaml'
-        ), status_code
-    if "json" in content_type:
-        return jsonify(data), status_code
-    else:
-        return jsonify(data), status_code
+    data_as_bytes = contenttype_serializers.to_type(request.content_type, data)
+    return current_app.response_class(
+        data_as_bytes, request.content_type
+    ), status_code

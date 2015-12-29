@@ -1,58 +1,7 @@
-import pkg_resources
 import copy
-from flask import jsonify, render_template
 from flask_restplus.apidoc import apidoc
-from .definitions import Definitions
-from .paths import Paths
-
-SWAGGER_FILES_ROOT = pkg_resources.resource_filename(
-    "flask_transmute", "swagger-ui"
-)
-
-EXAMPLE_SWAGGER_JSON = {
-    "info": {"title": "myApi", "version": "1.0"},
-    "swagger": "2.0",
-    "tags": [{
-        "name": "pet"
-    }],
-    "paths": {
-        "/deck/add_card": {
-            "post": {
-                "tags": ["card"],
-                "summary": "add a card to a deck.",
-                "description": "",
-                "produces": ["application/json"],
-                "parameters": [{
-                    "in": "body",
-                    "name": "body",
-                    "required": True,
-                    #"schema": {
-                    #   "$ref": "#/definitions/Card"
-                    #}
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "name": {"type": "string"},
-                            "description": {"type": "string"}
-                        }
-                    }
-                }],
-                "responses": {
-                    "200": {"description": "good input"}
-                }
-            }
-        }
-    },
-    "definitions": {
-        "Card": {
-            "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "description": {"type": "string"}
-            }
-        }
-    }
-}
+from flask import jsonify, render_template
+from web_transmute.swagger import Definitions, Paths
 
 
 class Swagger(object):
@@ -78,7 +27,6 @@ class Swagger(object):
 
         @app.route(swagger_route)
         def return_swagger_json():
-            # return jsonify(EXAMPLE_SWAGGER_JSON)
             return jsonify(swagger_json)
 
         @self._restplus_apidoc.route(swagger_ui_route)

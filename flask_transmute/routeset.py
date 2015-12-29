@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple
-from .function import TransmuteFunction
+from web_transmute.function import TransmuteFunction
 from .utils import get_public_callables
 
 

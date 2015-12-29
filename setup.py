@@ -13,6 +13,7 @@ install_requires = [
     'flask-restplus',
     'tornado',
     'pyyaml',
+    'web-transmute'
 ]
 
 tests_require = []
