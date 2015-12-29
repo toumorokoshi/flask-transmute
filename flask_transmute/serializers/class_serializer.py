@@ -1,5 +1,7 @@
 import types
-from .exceptions import SerializerException
+from .exceptions import (
+    SerializerException, SerializationException
+)
 from .schema import validate_schema
 
 
@@ -29,8 +31,13 @@ def generate_class_serializer(cls, serializers):
             data = {}
             for attr_name, attr_details in schema["properties"].items():
                 serializer = serializers[attr_details["type"]]
-                value = getattr(obj, attr_name)
-                data[attr_name] = serializer.serialize(value)
+                if hasattr(obj, attr_name):
+                    value = getattr(obj, attr_name)
+                    data[attr_name] = serializer.serialize(value)
+                elif attr_name in schema.get("required", []):
+                    raise SerializationException(
+                        "required attribute {0} not found".format(attr_name)
+                    )
             return data
 
         @staticmethod

@@ -28,7 +28,7 @@ class Card(object):
     transmute_schema = {
         "properties": {
             "name": {"type": str},
-            "description": {"type": str}
+            "description": {"type": str},
         },
         "required": ["name", "description"]
     }
