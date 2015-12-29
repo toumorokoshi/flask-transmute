@@ -64,7 +64,7 @@ def test_bool_deserializer_unhappy(unhappy_input):
     ("foo", "foo")
 ])
 def test_string_deserializer_happy(inp, expected_output):
-    assert StringSerializer.deserialize(inp) is expected_output
+    assert StringSerializer.deserialize(inp) == expected_output
 
 
 @pytest.mark.parametrize("unhappy_input", [
@@ -80,7 +80,7 @@ def test_string_deserializer_unhappy(unhappy_input):
     (None, None)
 ])
 def test_none_deserializer_happy(inp, expected_output):
-    assert NoneSerializer.deserialize(inp) is expected_output
+    assert NoneSerializer.deserialize(inp) == expected_output
 
 
 @pytest.mark.parametrize("unhappy_input", [

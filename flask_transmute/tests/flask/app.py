@@ -52,7 +52,8 @@ class Deck(object):
     # modify data. adding updtate ensures
     # the request will be a POST
     @flask_transmute.updates
-    def add_card(self, card: Card) -> Card:
+    @flask_transmute.annotate({"card": Card, "return": Card})
+    def add_card(self, card):
         """ add a card to the deck """
         if len(card.name) > 100:
             raise DeckException(
@@ -61,7 +62,8 @@ class Deck(object):
         self._cards += [card]
         return card
 
-    def cards(self) -> [Card]:
+    @flask_transmute.annotate({"return": [Card]})
+    def cards(self):
         """ retrieve all cards from the deck """
         return self._cards
 
