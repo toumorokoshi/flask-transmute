@@ -24,6 +24,18 @@ def test_add_card(flask_app):
     assert resp_json == {"success": True, "result": data["card"]}
 
 
+def test_raise_401(flask_app):
+    app = flask_app.test_client()
+    resp = app.get("/raise_401")
+    assert resp.status_code == 401
+
+
+def test_raise_404(flask_app):
+    app = flask_app.test_client()
+    resp = app.get("/raise_404")
+    assert resp.status_code == 404
+
+
 @pytest.mark.parametrize("ret_val", [
     {"a": "b"}, 10, "string", True,
 ])

@@ -37,7 +37,7 @@ def wrap_method(transmute_function):
                 return _return({
                     "success": False,
                     "detail": str(e)
-                }, status_code=400)
+                }, status_code=getattr(e, "status_code", 400))
             else:
                 raise
 

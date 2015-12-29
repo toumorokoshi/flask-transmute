@@ -2,6 +2,7 @@ import flask_transmute
 from flask import Flask
 from flask_transmute.flask import FlaskRouteSet
 from flask_transmute.swagger import Swagger
+from flask_transmute.exceptions import NotFoundException, ApiException
 
 
 # having an exception that is raised in
@@ -80,6 +81,19 @@ route_set.route_object('/deck', deck,
                        # response, with the error message being the message
                        # of the exception
                        error_exceptions=[DeckException])
+
+
+def raise_401():
+    raise ApiException("", status_code=401)
+
+route_set.route_function("/raise_401", raise_401)
+
+
+def raise_404():
+    raise NotFoundException()
+
+route_set.route_function("/raise_404", raise_404)
+
 swagger = Swagger("myApi", "1.0")
 # route_set.add_extension(swagger)
 
