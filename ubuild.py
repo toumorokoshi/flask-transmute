@@ -13,7 +13,7 @@ def test(build):
     build.packages.install("pytest")
     build.packages.install("pytest-cov")
     pytest = os.path.join(build.root, "bin", "py.test")
-    subprocess.call([
+    return subprocess.call([
         pytest, "--cov", "flask_transmute",
         "flask_transmute/tests",
         "--cov-report", "term-missing"
