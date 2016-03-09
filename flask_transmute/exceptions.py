@@ -9,8 +9,8 @@ class ApiException(FlaskTransmuteException):
         super(ApiException, self).__init__(message)
         self.status_code = status_code
 
-class APIException(ApiException):
-    """ Properly named version of ApiException raising this will return a "success": false with some details """
+class APIException(FlaskTransmuteException):
+    """ Properly named version of ApiException - raising this will return a "success": false with some details """
 
     def __init__(self, message=None, status_code=400):
         super(APIException, self).__init__(message)
