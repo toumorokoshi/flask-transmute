@@ -25,10 +25,10 @@ def _download_swagger_ui(build):
     # _script: "uscripts/download_swagger_ui.py"
 
 
-def publish(build):
+def distribute(build):
     """ distribute the uranium package """
     build.packages.install("wheel")
     build.executables.run([
         "python", "setup.py",
-        "sdist", "upload"
+        "sdist", "bdist_wheel", "--universal", "upload"
     ])
