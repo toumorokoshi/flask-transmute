@@ -48,5 +48,4 @@ def generate_class_serializer(cls, serializers):
         cls.__name__
     )
 
-    serializers[cls] = ClassSerializer
     return ClassSerializer

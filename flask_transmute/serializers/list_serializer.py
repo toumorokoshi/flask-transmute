@@ -7,7 +7,7 @@ def list_is_serializable(cls):
 
 def generate_list_serializer(cls, serializers):
 
-    sub_serializer = serializers.get(cls)
+    sub_serializer = serializers[cls]
 
     class ListSerializer(object):
 
