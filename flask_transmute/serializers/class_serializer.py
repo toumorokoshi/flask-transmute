@@ -6,7 +6,6 @@ from .schema import validate_schema
 
 
 def class_is_serializable(cls):
-
     from_dict = getattr(cls, "from_transmute_dict", None)
 
     if not from_dict or not isinstance(from_dict, types.FunctionType):

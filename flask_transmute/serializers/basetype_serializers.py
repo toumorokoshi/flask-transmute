@@ -1,5 +1,30 @@
+from decimal import Decimal, InvalidOperation
 from .exceptions import SerializationException
 from ..compat import string_type
+
+
+class DecimalSerializer(object):
+    """
+    for decimal serialization, we want
+    accuracy to and from.
+
+    as JSON doesn't support decimal natively,
+    we use strings instead (floats can lead to unacceptable
+    inaccuracy
+    """
+
+    @staticmethod
+    def serialize(obj):
+        return str(obj)
+
+    @staticmethod
+    def deserialize(data):
+        try:
+            return Decimal(data)
+        except InvalidOperation:
+            raise SerializationException(
+                "unable to interpret {0} as a decimal.".format(str(data))
+            )
 
 
 class IntSerializer(object):

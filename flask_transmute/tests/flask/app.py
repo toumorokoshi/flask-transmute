@@ -1,4 +1,5 @@
 import flask_transmute
+from decimal import Decimal
 from flask import Flask
 from flask_transmute.flask import FlaskRouteSet
 from flask_transmute.swagger import Swagger
@@ -16,9 +17,10 @@ class DeckException(Exception):
 
 class Card(object):
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, price):
         self.name = name
         self.description = description
+        self.price = price
 
     # transmute_schema is an attribute that helps flask_transmute
     # serialize and deserialize your object.
@@ -30,8 +32,9 @@ class Card(object):
         "properties": {
             "name": {"type": str},
             "description": {"type": str},
+            "price": {"type": Decimal}
         },
-        "required": ["name", "description"]
+        "required": ["name", "description", "price"]
     }
 
     # if you want to be able to automatically populate fields
@@ -40,7 +43,7 @@ class Card(object):
     # object to a class instance.
     @staticmethod
     def from_transmute_dict(model):
-        return Card(model["name"], model["description"])
+        return Card(**model)
 
 
 class Deck(object):

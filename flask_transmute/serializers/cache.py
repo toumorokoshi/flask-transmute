@@ -1,4 +1,6 @@
+from decimal import Decimal
 from .basetype_serializers import (
+    DecimalSerializer,
     BoolSerializer,
     NoneSerializer,
     IntSerializer,
@@ -22,6 +24,7 @@ class SerializerCache(object):
     def __init__(self):
         self._cache = {
             bool: BoolSerializer,
+            Decimal: DecimalSerializer,
             type(None): NoneSerializer,
             None: NoneSerializer,
             int: IntSerializer,

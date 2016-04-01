@@ -1,6 +1,8 @@
 import pytest
+from decimal import Decimal
 from flask_transmute.serializers import (
     BoolSerializer,
+    DecimalSerializer,
     FloatSerializer,
     IntSerializer,
     NoneSerializer,
@@ -24,6 +26,25 @@ def test_int_deserializer_unhappy(unhappy_input):
     """ test all unhappy cases for the integer serializer """
     with pytest.raises(SerializerException):
         IntSerializer.deserialize(unhappy_input)
+
+
+@pytest.mark.parametrize("inp, expected_output", [
+    ("10", Decimal(10)),
+    ("-1", Decimal(-1)),
+    ("-1.2345", Decimal("-1.2345")),
+])
+def test_decimal_deserializer_happy(inp, expected_output):
+    """ test all happy cases for the integer serializer """
+    assert DecimalSerializer.deserialize(inp) == expected_output
+
+
+@pytest.mark.parametrize("unhappy_input", [
+    "foo", "bar"
+])
+def test_decimal_deserializer_unhappy(unhappy_input):
+    """ test all unhappy cases for the integer serializer """
+    with pytest.raises(SerializerException):
+        DecimalSerializer.deserialize(unhappy_input)
 
 
 @pytest.mark.parametrize("inp, expected_output", [

@@ -14,7 +14,7 @@ def test_cards(flask_app):
 
 def test_add_card(flask_app):
     app = flask_app.test_client()
-    data = {"card": {"name": "foo", "description": "bar"}}
+    data = {"card": {"name": "foo", "description": "bar", "price": "1.35"}}
     resp = app.post(
         "/deck/add_card",
         data=json.dumps(data),
