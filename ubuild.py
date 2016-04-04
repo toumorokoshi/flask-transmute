@@ -17,7 +17,7 @@ def test(build):
         pytest, "--cov", "flask_transmute",
         "flask_transmute/tests",
         "--cov-report", "term-missing"
-    ])
+    ] + build.options.args)
 
 
 def _download_swagger_ui(build):

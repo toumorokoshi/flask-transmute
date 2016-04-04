@@ -73,7 +73,13 @@ def _add_request_parameters_to_args(arguments, request_args, arg_dict):
         try:
             serializer = get_serializer(info.type)
             if isinstance(info.type, list):
-                value = request_args.getlist(argument)
+                # in the case where the request is GET,
+                # we need to use a multidict field.
+                if hasattr(request_args, "getlist"):
+                    value = request_args.getlist(argument)
+                # else, we use a standard dict.
+                else:
+                    value = request_args.get(argument)
             else:
                 value = request_args.get(argument)
             value = serializer.deserialize(value)

@@ -1,6 +1,7 @@
 import json
 import yaml
 import pytest
+import flask_transmute
 from conftest import create_test_app
 
 
@@ -81,3 +82,30 @@ def test_route_yaml():
         "success": True,
         "result": "testme"
     }
+
+
+def test_queryparams():
+
+    @flask_transmute.annotate({"name": [str]})
+    def return_input_string(name):
+        return str(name)
+
+    test_app = create_test_app("/foo", return_input_string)
+    resp = test_app.get("/foo?name=testme&name=again")
+    assert "testme" in resp.data.decode("UTF-8")
+    assert "again" in resp.data.decode("UTF-8")
+
+
+def test_list_body():
+
+    @flask_transmute.annotate({"name": [str]})
+    @flask_transmute.updates
+    def return_input_string(name):
+        return str(name)
+
+    test_app = create_test_app("/foo", return_input_string)
+    resp = test_app.post("/foo", data=json.dumps({
+        "name": ["testme", "again"]
+    }))
+    assert "testme" in resp.data.decode("UTF-8")
+    assert "again" in resp.data.decode("UTF-8")
