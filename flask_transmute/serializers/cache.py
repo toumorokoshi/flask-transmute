@@ -1,4 +1,9 @@
 from decimal import Decimal
+from .or_serializer import (
+    Or,
+    or_is_serializable,
+    generate_or_serializer
+)
 from .basetype_serializers import (
     DecimalSerializer,
     BoolSerializer,
@@ -50,6 +55,9 @@ class SerializerCache(object):
         if isinstance(cls, tuple):
             for subclass in list_is_serializable(cls):
                 self[subclass]
+        elif isinstance(cls, Or):
+            for subclass in or_is_serializable(cls):
+                self[subclass]
         else:
             for subclass in class_is_serializable(cls):
                 self[subclass]
@@ -58,6 +66,8 @@ class SerializerCache(object):
         self._assert_type_is_serializable(cls)
         if isinstance(cls, list):
             serializer = generate_list_serializer(cls[0], self)
+        elif isinstance(cls, Or):
+            serializer = generate_or_serializer(cls, self)
         else:
             serializer = generate_class_serializer(cls, self)
         return serializer

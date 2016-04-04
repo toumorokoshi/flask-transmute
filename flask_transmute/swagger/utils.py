@@ -7,5 +7,5 @@ SWAGGER_TYPEMAP = {
     int: "integer",
     bool: "boolean",
     list: "array",
-    type(None): "null"
+    type(None): "null",
 }

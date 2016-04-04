@@ -1,4 +1,5 @@
 from .utils import SWAGGER_TYPEMAP
+from ..serializers import Or
 
 
 class Definitions(object):
@@ -21,6 +22,9 @@ class Definitions(object):
                 "items": self.get(model_or_cls[0]),
                 "collectionFormat": "multi"
             }
+
+        if isinstance(model_or_cls, Or):
+            return {"type": "object"}
 
         for typ, typ_name in SWAGGER_TYPEMAP.items():
             if issubclass(model_or_cls, typ):

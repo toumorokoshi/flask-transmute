@@ -1,4 +1,5 @@
 from .exceptions import InvalidSchema
+from .or_serializer import Or
 
 
 def validate_schema(schema):
@@ -52,6 +53,12 @@ def _is_valid_type_definition(type_definition):
         if len(type_definition) != 1:
             return False
         return _is_valid_type_definition(type_definition[0])
+
+    elif isinstance(type_definition, Or):
+        for c in type_definition.classes:
+            if not _is_valid_type_definition(c):
+                return False
+        return True
 
     elif isinstance(type_definition, dict):
         for key, value in type_definition.items():

@@ -1,6 +1,7 @@
 from .exceptions import SerializerException
 from .basetype_serializers import *
 from .cache import SerializerCache
+from .or_serializer import Or
 
 
 def get_serializer(cls):

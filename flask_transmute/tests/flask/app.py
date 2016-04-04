@@ -4,6 +4,7 @@ from flask import Flask
 from flask_transmute.flask import FlaskRouteSet
 from flask_transmute.swagger import Swagger
 from flask_transmute.exceptions import NotFoundException, ApiException
+from flask_transmute.serializers import Or
 
 
 # having an exception that is raised in
@@ -32,7 +33,8 @@ class Card(object):
         "properties": {
             "name": {"type": str},
             "description": {"type": str},
-            "price": {"type": Decimal}
+            "price": {"type": Decimal},
+            "either": {"type": Or(int, str)}
         },
         "required": ["name", "description", "price"]
     }

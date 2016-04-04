@@ -3,6 +3,7 @@ import yaml
 import pytest
 import flask_transmute
 from conftest import create_test_app
+from flask_transmute.serializers import Or
 
 
 def test_cards(flask_app):
@@ -109,3 +110,16 @@ def test_list_body():
     }))
     assert "testme" in resp.data.decode("UTF-8")
     assert "again" in resp.data.decode("UTF-8")
+
+
+def test_or_serializer():
+
+    @flask_transmute.annotate({"either": Or(bool, int)})
+    def return_input_string(either):
+        return str(type(either))
+
+    test_app = create_test_app("/foo", return_input_string)
+    resp = test_app.get("/foo?either=false")
+    assert "bool" in resp.data.decode("UTF-8")
+    resp = test_app.get("/foo?either=1234")
+    assert "int" in resp.data.decode("UTF-8")
