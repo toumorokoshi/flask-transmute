@@ -1,3 +1,3 @@
 from transmute_core import *
-from .decorators import creates, deletes, updates, annotate
-from .flask import FlaskRouteSet
+from .route import transmute_route
+from .swagger import add_swagger

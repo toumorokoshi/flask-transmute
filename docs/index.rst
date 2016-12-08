@@ -29,12 +29,12 @@ Here's a brief example::
     # creates an api that:
     # * accepts multiple markup types like json and yaml
     # * validates with input types that are specified
-    @transmute_route(app, '/multiple')
+    @transmute_route(app, '/multiply')
     # annotate types to tell flask-transmute what to verify
     # the type as (default string)
     @annotate({"left": int, "right": int, "return": int})
     def multiply(left, right):
-        return left + right
+        return left * right
 
     # if you use python 3.5+, you can annotate directly
     # in the method signature.
@@ -66,5 +66,7 @@ Contents:
 
    routes
    serialization
+-------------------
    documentation
-   legacy
+-------------------
+   legacy/index.rst

@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-flask-transmute
-===============
+pre 1.0 documentation
+=====================
 
 flask-transmute is a flask extension that generates APIs from standard
 python functions and classes. Autodocumention is also provided via `swagger <http://swagger.io/>`_.
