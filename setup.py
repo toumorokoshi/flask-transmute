@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 import os
+import sys
 from setuptools import setup, find_packages
+
+is_release = False
+if "--release" in sys.argv:
+    is_release = True
 
 base = os.path.dirname(os.path.abspath(__file__))
 
@@ -8,24 +13,23 @@ README_PATH = os.path.join(base, "README.rst")
 
 install_requires = [
     'Flask',
-    # we're using restplus because it has a nicely bundled
-    # set of statics for swagger.
-    'flask-restplus',
-    'tornado',
-    'pyyaml',
+    'transmute-core'
 ]
 
 tests_require = []
 
 setup(name='flask-transmute',
-      version='0.2.15b',
+      setup_requires=["vcver"],
+      vcver={
+          "is_release": is_release,
+          "path": base
+      },
       description='a flask plugin to generate routes from objects.',
       long_description=open(README_PATH).read(),
       author='Yusuke Tsutsumi',
       author_email='yusuke@tsutsumi.io',
       url='',
       packages=find_packages(),
-      package_data={"flask_transmute": ["swagger-ui/*"]},
       install_requires=install_requires,
       classifiers=[
           'Development Status :: 3 - Alpha',

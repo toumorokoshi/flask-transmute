@@ -8,27 +8,27 @@ def main(build):
 
 def test(build):
     main(build)
-    build.packages.install("jedi")
-    build.packages.install("sphinx")
     build.packages.install("pytest")
     build.packages.install("pytest-cov")
     pytest = os.path.join(build.root, "bin", "py.test")
-    return subprocess.call([
+    subprocess.call([
         pytest, "--cov", "flask_transmute",
         "flask_transmute/tests",
         "--cov-report", "term-missing"
     ] + build.options.args)
 
 
-def _download_swagger_ui(build):
-    pass
-    # _script: "uscripts/download_swagger_ui.py"
-
-
-def distribute(build):
+def publish(build):
     """ distribute the uranium package """
     build.packages.install("wheel")
     build.executables.run([
         "python", "setup.py",
-        "sdist", "bdist_wheel", "--universal", "upload"
+        "sdist", "bdist_wheel", "--universal", "upload", "--release"
     ])
+
+
+def build_docs(build):
+    build.packages.install("sphinx")
+    return subprocess.call(
+        ["make", "html"], cwd=os.path.join(build.root, "docs")
+    )

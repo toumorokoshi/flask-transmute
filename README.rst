@@ -1,11 +1,13 @@
-=================
+===============
 flask-transmute
-=================
+===============
 
-.. warn:: this is an incomplete project! the owner has migrated to
-          aiohttp. Refer to aiohttp for a complete implementation of
-          transmute.
+.. image:: https://travis-ci.org/toumorokoshi/flask-transmute.svg?branch=master
+    :alt: build status
+    :target: https://travis-ci.org/toumorokoshi/flask-transmute
 
-          If you are interested in developing this implementation, please contact me via github issue or e-mail
+.. image:: https://coveralls.io/repos/github/toumorokoshi/flask-transmute/badge.svg?branch=master
+    :alt: coverage status
+    :target: https://coveralls.io/github/toumorokoshi/flask-transmute?branch=master
 
-route generation from function signatures in Python, for the flask framework
+A transmute (http://transmute-core.readthedocs.io/) implementation for flask.
