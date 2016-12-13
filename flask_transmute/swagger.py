@@ -8,6 +8,7 @@ from transmute_core.swagger import (
 )
 
 STATIC_ROOT = "/_swagger/static"
+SWAGGER_ATTR_NAME = "_transmute_swagger"
 
 
 def add_swagger(app, json_route, html_route):
@@ -54,7 +55,7 @@ def create_swagger_json_handler(app, title="example", version="1.0"):
 
     spec = Swagger({
         "info": Info({"title": title, "version": version}),
-        "paths": {},
+        "paths": getattr(app, SWAGGER_ATTR_NAME, {}),
         "swagger": "2.0",
         "basePath": "/",
     }).to_primitive()
