@@ -6,6 +6,7 @@ from setuptools import setup, find_packages
 is_release = False
 if "--release" in sys.argv:
     is_release = True
+    sys.argv.remove("--release")
 
 base = os.path.dirname(os.path.abspath(__file__))
 
