@@ -1,6 +1,5 @@
 import json
 from flask import Response, Blueprint
-from swagger_schema import Swagger, Info
 
 from transmute_core.swagger import (
     generate_swagger,
@@ -44,7 +43,7 @@ def add_swagger_api_route(app, target_route, swagger_json_route):
     app.register_blueprint(blueprint)
 
 
-def create_swagger_json_handler(app, title="example", version="1.0"):
+def create_swagger_json_handler(app, **kwargs):
     """
     Create a handler that returns the swagger definition
     for an application.
@@ -53,12 +52,11 @@ def create_swagger_json_handler(app, title="example", version="1.0"):
     TransmuteUrlDispatcher as the router.
     """
 
-    spec = Swagger({
-        "info": Info({"title": title, "version": version}),
-        "paths": getattr(app, SWAGGER_ATTR_NAME, {}),
-        "swagger": "2.0",
-        "basePath": "/",
-    }).to_primitive()
+    spec = getattr(app, SWAGGER_ATTR_NAME)
+    if spec:
+        spec = spec.swagger_definition(**kwargs)
+    else:
+        spec = {}
     encoded_spec = json.dumps(spec).encode("UTF-8")
 
     def swagger():
