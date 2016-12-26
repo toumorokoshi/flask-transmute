@@ -11,3 +11,7 @@ flask-transmute
     :target: https://coveralls.io/github/toumorokoshi/flask-transmute?branch=master
 
 A transmute (http://transmute-core.readthedocs.io/) implementation for flask.
+
+You can find out more here:
+
+http://flask-transmute.readthedocs.io/en/latest/
