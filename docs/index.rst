@@ -66,4 +66,5 @@ Contents:
 
    routes
    serialization
+   documentation
    legacy/index.rst

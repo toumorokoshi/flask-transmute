@@ -18,6 +18,6 @@ def transmute_route(app, context=default_context, **kwargs):
                 setattr(app, SWAGGER_ATTR_NAME, SwaggerSpec())
             swagger_obj = getattr(app, SWAGGER_ATTR_NAME)
             swagger_obj.add_func(transmute_func, context)
-            app.route(r)(handler)
+            app.route(r, methods=transmute_func.methods)(handler)
         return handler
     return decorator

@@ -8,11 +8,11 @@ from transmute_core import (
 def create_routes_and_handler(transmute_func, context):
 
     @wraps(transmute_func.raw_func)
-    def handler():
+    def handler(*args, **kwargs):
         exc, result = None, None
         try:
             args, kwargs = _param_instance.extract_params(
-                context, transmute_func, request.content_type
+                context, transmute_func, request.content_type,
             )
             result = transmute_func(*args, **kwargs)
         except Exception as e:
@@ -45,8 +45,7 @@ class ParamExtractorFlask(ParamExtractor):
         return {}
 
     @property
-    @staticmethod
-    def body():
+    def body(self):
         return request.get_data()
 
     @staticmethod
@@ -64,6 +63,6 @@ class ParamExtractorFlask(ParamExtractor):
 
     @staticmethod
     def _path_argument(key):
-        return request.match_info.get(key, NoArgument)
+        return request.view_args.get(key, NoArgument)
 
 _param_instance = ParamExtractorFlask()

@@ -6,38 +6,36 @@ def test_happy_path(test_app):
     assert json.loads(r.data.decode()) == 9
 
 
+def test_complex(test_app):
+    r = test_app.post("/complex/3",
+                      data=json.dumps({"body": "1"}),
+                      headers={
+                          "header": "2",
+                          "content-type": "application/json"
+                      })
+    assert json.loads(r.data.decode()) == "1:2:3"
+
+
+def test_api_exception(test_app):
+    r = test_app.get("/exception")
+    assert r.status_code == 400
+    resp = json.loads(r.data.decode())
+    assert resp["code"] == 400
+    assert resp["success"] is False
+
+
 def test_swagger(test_app):
     r = test_app.get("/swagger.json")
     swagger = json.loads(r.data.decode())
-    assert swagger == {
-        u'info': {
-            u'version': u'1.0',
-            u'title': u'example'
-        },
-        u'paths': {
-            u'/multiply': {
-                u'get': {
-                    u'description': u'',
-                    u'parameters': [
-                        {u'required': False,
-                         u'type': u'string',
-                         u'name': u'right',
-                         u'in': u'query'
-                        },
-                        {u'required': False,
-                         u'type': u'string',
-                         u'name': u'left',
-                         u'in': u'query'
-                        }
-                    ],
-                    u'produces': [u'application/json',
-                                  u'application/x-yaml'],
-                    u'summary': u'',
-                    u'consumes': [u'application/json',
-                                  u'application/x-yaml'],
-                    u'responses': {
-                        u'200': {
-                            u'description': u'success',
-                            u'schema': {"type": "number"},
-                        },
-                        u'400': {u'description': u'invalid input received', u'schema': {u'required': [u'success', u'message'], u'type': u'object', u'properties': {u'message': {u'type': u'string'}, u'success': {u'type': u'boolean'}}, u'title': u'FailureObject'}}}}}}, u'basePath': u'/', u'swagger': u'2.0'}
+    assert swagger["info"] == {
+        'version': '1.0',
+        'title': 'example'
+    }
+    assert '/multiply' in swagger['paths']
+    assert '/exception' in swagger['paths']
+
+
+def test_swagger_html(test_app):
+    r = test_app.get("/swagger")
+    assert "/swagger.json" in r.data.decode()
+    assert r.status_code == 200
