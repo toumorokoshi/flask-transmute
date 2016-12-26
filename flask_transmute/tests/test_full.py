@@ -3,12 +3,12 @@ import json
 
 def test_happy_path(test_app):
     r = test_app.get("/multiply?left=3&right=3")
-    assert json.loads(r.data)["result"] == 9
+    assert json.loads(r.data.decode()) == 9
 
 
 def test_swagger(test_app):
     r = test_app.get("/swagger.json")
-    swagger = json.loads(r.data)
+    swagger = json.loads(r.data.decode())
     assert swagger == {
         u'info': {
             u'version': u'1.0',
@@ -38,8 +38,6 @@ def test_swagger(test_app):
                     u'responses': {
                         u'200': {
                             u'description': u'success',
-                            u'schema': {
-                                u'required': [u'success', u'result'],
-                                u'type': u'object',
-                                u'properties': {
-                                    u'result': {u'type': u'number'}, u'success': {u'type': u'boolean'}}, u'title': u'SuccessObject'}}, u'400': {u'description': u'invalid input received', u'schema': {u'required': [u'success', u'message'], u'type': u'object', u'properties': {u'message': {u'type': u'string'}, u'success': {u'type': u'boolean'}}, u'title': u'FailureObject'}}}}}}, u'basePath': u'/', u'swagger': u'2.0'}
+                            u'schema': {"type": "number"},
+                        },
+                        u'400': {u'description': u'invalid input received', u'schema': {u'required': [u'success', u'message'], u'type': u'object', u'properties': {u'message': {u'type': u'string'}, u'success': {u'type': u'boolean'}}, u'title': u'FailureObject'}}}}}}, u'basePath': u'/', u'swagger': u'2.0'}

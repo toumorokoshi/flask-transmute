@@ -2,7 +2,7 @@ import json
 from flask import Response, Blueprint
 
 from transmute_core.swagger import (
-    generate_swagger,
+    generate_swagger_html,
     get_swagger_static_root
 )
 
@@ -23,13 +23,13 @@ def add_swagger_api_route(app, target_route, swagger_json_route):
     """
     mount a swagger statics page.
 
-    app: the aiohttp app object
+    app: the flask app object
     target_route: the path to mount the statics page.
     swagger_json_route: the path where the swagger json definitions is
         expected to be.
     """
     static_root = get_swagger_static_root()
-    swagger_body = generate_swagger(
+    swagger_body = generate_swagger_html(
         STATIC_ROOT, swagger_json_route
     ).encode("utf-8")
 
