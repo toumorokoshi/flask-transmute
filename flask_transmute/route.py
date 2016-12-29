@@ -6,7 +6,7 @@ from .handler import create_routes_and_handler
 from .swagger import SWAGGER_ATTR_NAME
 
 
-def transmute_route(app, context=default_context, **kwargs):
+def route(app, context=default_context, **kwargs):
     """ attach a transmute route. """
     def decorator(fn):
         fn = describe(**kwargs)(fn)
