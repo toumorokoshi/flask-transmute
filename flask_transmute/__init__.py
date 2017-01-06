@@ -12,8 +12,8 @@ The last pre-1.0 release is 0.2.15. You
 can pin to that, or upgrade to the new
 syntax and approach:
 
+http://flask-transmute.readthedocs.io/en/latest/legacy/migrating.html
 http://transmute-core.readthedocs.io/en/latest/
-http://flask-transmute.readthedocs.io/en/latest/
 """.strip()
 
 

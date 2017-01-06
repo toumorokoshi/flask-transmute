@@ -23,7 +23,9 @@ The steps are outlined in detail below.
 ---------------------------
 
 flask-transmute has dropped it's proprietary json-schema based model
-definition, and adopted the default Schematics.
+definition, and adopted the `Schematics
+<http://schematics.readthedocs.io/>`_ library as the default
+serializer.
 
 .. note:: the serializer is customizable. See `TransmuteContext <http://transmute-core.readthedocs.io/en/latest/context.html>`_
 
@@ -135,10 +137,24 @@ flask_transmute.route are also passed along to a describe() call:
 .. code-block:: python
 
     # after
+    @flask_transmute.route(app)
+    @flask_transmute.describe(paths="/is_programming_fun", methods=["POST"])
+    @flask_transmute.annotate({"answers": bool, "return": bool})
+    def is_programming_fun(answer):
+        return True
+
+
+Even simpler, arguments to describe can be passed into route directly:
+
+
+.. code-block:: python
+
+    # after
     @flask_transmute.route(app, paths="/is_programming_fun", methods=["POST"])
     @flask_transmute.annotate({"answers": bool, "return": bool})
     def is_programming_fun(answer):
         return True
+
 
 
 .. warning:: the new transmute syntax does not use the flask routing
@@ -173,4 +189,4 @@ the add_swagger method should be used instead:
                                 title="myApi", version="1.0")
 
 
-And you're done!
+And you're done! You can learn more about how to customize in this document, and the `transmute-core <http://transmute-core.readthedocs.io/en/latest/>`_ docs.
