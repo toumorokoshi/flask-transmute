@@ -19,14 +19,15 @@ setup.py and/or requirements.txt for your service.
 Here's a brief example::
 
     import flask_transmute
-    from flask import Flask
+    from flask import Flask, Blueprint
 
     app = Flask(__name__)
+    blueprint = Blueprint("blueprint", __name__, url_prefix="/foo")
 
     # creates an api that:
     # * accepts multiple markup types like json and yaml
     # * validates with input types that are specified
-    @flask_transmute.route(app, '/multiple')
+    @flask_transmute.route(app, paths='/multiple')
     # annotate types to tell flask-transmute what to verify
     # the type as (default string)
     @flask_transmute.annotate({"left": int, "right": int, "return": int})
@@ -35,9 +36,17 @@ Here's a brief example::
 
     # if you use python 3.5+, you can annotate directly
     # in the method signature.
-    @flask_transmute.route(app, '/multiply3')
+    @flask_transmute.route(app, paths='/multiply3')
     def multiply_3(left: int, right: int) -> int:
         return left + right
+
+    # blueprints are supported as well
+    @flask_transmute.route(blueprint, paths='/subroute')
+    @flask_transmute.annotate({"return": bool})
+    def subroute():
+        return True
+
+    app.register_blueprint(blueprint)
 
     # finally, you can add a swagger json and a documentation page by:
     flask_transmute.add_swagger(app, "/swagger.json", "/swagger")

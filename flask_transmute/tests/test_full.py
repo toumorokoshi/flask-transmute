@@ -33,6 +33,8 @@ def test_swagger(test_app):
     }
     assert '/multiply' in swagger['paths']
     assert '/exception' in swagger['paths']
+    # test blueprint is documented as well
+    assert '/blueprint/foo' in swagger['paths']
 
 
 def test_swagger_html(test_app):

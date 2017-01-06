@@ -54,6 +54,7 @@ def create_swagger_json_handler(app, **kwargs):
 
     spec = getattr(app, SWAGGER_ATTR_NAME)
     if spec:
+        _add_blueprint_specs(app, spec)
         spec = spec.swagger_definition(**kwargs)
     else:
         spec = {}
@@ -70,3 +71,12 @@ def create_swagger_json_handler(app, **kwargs):
         )
 
     return swagger
+
+
+def _add_blueprint_specs(app, root_spec):
+    for name, blueprint in app.blueprints.items():
+        if hasattr(blueprint, SWAGGER_ATTR_NAME):
+            spec = getattr(blueprint, SWAGGER_ATTR_NAME)
+            for path, path_item in spec.paths.items():
+                path = blueprint.url_prefix + path
+                root_spec.add_path(path, path_item)

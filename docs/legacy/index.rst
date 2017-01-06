@@ -131,6 +131,7 @@ Contents:
    autodocumentation
    decorators
    serialization
+   migrating
 
 Indices and tables
 ==================
