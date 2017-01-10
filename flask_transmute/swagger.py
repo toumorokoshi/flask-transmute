@@ -3,7 +3,8 @@ from flask import Response, Blueprint
 
 from transmute_core.swagger import (
     generate_swagger_html,
-    get_swagger_static_root
+    get_swagger_static_root,
+    SwaggerSpec
 )
 
 STATIC_ROOT = "/_swagger/static"
@@ -52,13 +53,10 @@ def create_swagger_json_handler(app, **kwargs):
     TransmuteUrlDispatcher as the router.
     """
 
-    spec = getattr(app, SWAGGER_ATTR_NAME)
-    if spec:
-        _add_blueprint_specs(app, spec)
-        spec = spec.swagger_definition(**kwargs)
-    else:
-        spec = {}
-    encoded_spec = json.dumps(spec).encode("UTF-8")
+    spec = getattr(app, SWAGGER_ATTR_NAME, SwaggerSpec())
+    _add_blueprint_specs(app, spec)
+    spec_dict = spec.swagger_definition(**kwargs)
+    encoded_spec = json.dumps(spec_dict).encode("UTF-8")
 
     def swagger():
         return Response(
@@ -78,5 +76,6 @@ def _add_blueprint_specs(app, root_spec):
         if hasattr(blueprint, SWAGGER_ATTR_NAME):
             spec = getattr(blueprint, SWAGGER_ATTR_NAME)
             for path, path_item in spec.paths.items():
-                path = blueprint.url_prefix + path
+                if blueprint.url_prefix:
+                    path = blueprint.url_prefix + path
                 root_spec.add_path(path, path_item)
