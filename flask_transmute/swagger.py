@@ -1,5 +1,6 @@
 import json
 from flask import Response, Blueprint
+from .legacy import Swagger
 
 from transmute_core.swagger import (
     generate_swagger_html,
