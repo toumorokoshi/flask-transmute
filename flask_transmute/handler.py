@@ -1,3 +1,4 @@
+import sys
 from functools import wraps
 from flask import request, Response
 from transmute_core import (
@@ -17,6 +18,7 @@ def create_routes_and_handler(transmute_func, context):
             result = transmute_func(*args, **kwargs)
         except Exception as e:
             exc = e
+            exc.__traceback__ = sys.exc_info()[2]
         response = transmute_func.process_result(
             context, result, exc, request.content_type
         )

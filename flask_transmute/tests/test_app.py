@@ -21,5 +21,5 @@ def test_blueprint_only_app():
     flask_transmute.add_swagger(app, "/swagger.json", "/swagger")
 
     test_client = app.test_client()
-    body = json.loads(test_client.get("/swagger.json").data)
+    body = json.loads(test_client.get("/swagger.json").data.decode())
     assert "/foo" in body["paths"]
