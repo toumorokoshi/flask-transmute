@@ -25,7 +25,8 @@ def create_routes_and_handler(transmute_func, context):
         return Response(
             response["body"],
             status=response["code"],
-            mimetype=response["content-type"]
+            mimetype=response["content-type"],
+            headers=response["headers"],
         )
     return (
         _convert_paths_to_flask(transmute_func.paths),

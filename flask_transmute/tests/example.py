@@ -1,4 +1,4 @@
-from flask_transmute import route, annotate
+from flask_transmute import route, annotate, Response
 import flask_transmute
 from flask import Flask, Blueprint
 
@@ -32,6 +32,26 @@ blueprint = Blueprint('blueprint', __name__, url_prefix="/blueprint")
 @annotate({"return": bool})
 def foo():
     return True
+
+
+@flask_transmute.route(app, paths="/api/v1/header",
+                       response_types={
+                           200: {"type": str, "description": "success",
+                                 "headers": {
+                                     "location": {
+                                         "description": "url to the location",
+                                         "type": str
+                                     }
+                                 }
+                           },
+                       }
+)
+def header():
+    return Response(
+        "foo", headers={"x-nothing": "value"}
+    )
+
+
 
 app.register_blueprint(blueprint)
 

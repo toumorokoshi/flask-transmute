@@ -6,6 +6,11 @@ def test_happy_path(test_app):
     assert json.loads(r.data.decode()) == 9
 
 
+def test_headers(test_app):
+    r = test_app.get("/api/v1/header")
+    assert r.headers["x-nothing"] == "value"
+
+
 def test_complex(test_app):
     r = test_app.post("/complex/3",
                       data=json.dumps({"body": "1"}),

@@ -16,3 +16,4 @@ flask_transmute/swagger-ui
 .cache
 VERSION
 .eggs
+pip-selfcheck.json
