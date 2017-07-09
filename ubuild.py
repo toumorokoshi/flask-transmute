@@ -1,5 +1,6 @@
 import os
 import subprocess
+from uranium import task_requires
 
 
 def main(build):
@@ -32,3 +33,12 @@ def build_docs(build):
     return subprocess.call(
         ["make", "html"], cwd=os.path.join(build.root, "docs")
     )
+
+@task_requires("main")
+def run_example(build):
+    """ run the example server. """
+    build.packages.install("gunicorn")
+    subprocess.call([
+        "gunicorn", "flask_transmute.tests.example:app",
+        "-c", os.path.join(build.root, "flask_transmute", "tests", "gunicorn_config.py")
+    ])

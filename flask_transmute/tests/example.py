@@ -56,4 +56,4 @@ def header():
 app.register_blueprint(blueprint)
 
 # finally, you can add a swagger json and a documentation page by:
-flask_transmute.add_swagger(app, "/swagger.json", "/swagger")
+flask_transmute.add_swagger(app, "/swagger.json", "/api/")
