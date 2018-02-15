@@ -43,6 +43,6 @@ def test_swagger(test_app):
 
 
 def test_swagger_html(test_app):
-    r = test_app.get("/swagger")
+    r = test_app.get("/api/")
     assert "/swagger.json" in r.data.decode()
     assert r.status_code == 200
