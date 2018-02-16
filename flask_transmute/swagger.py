@@ -12,12 +12,12 @@ STATIC_ROOT = "/_swagger/static"
 SWAGGER_ATTR_NAME = "_transmute_swagger"
 
 
-def add_swagger(app, json_route, html_route):
+def add_swagger(app, json_route, html_route, **kwargs):
     """
     a convenience method for both adding a swagger.json route,
     as well as adding a page showing the html documentation
     """
-    app.route(json_route)(create_swagger_json_handler(app))
+    app.route(json_route)(create_swagger_json_handler(app, **kwargs))
     add_swagger_api_route(app, html_route, json_route)
 
 
