@@ -19,8 +19,8 @@ CAT_PEOPLE = {
 }
 
 @flask_transmute.route(app, paths='/cat_person')
-#                        methods=["POST"])
-def get_cat_person(name: str) -> Person:
+@annotate({"name": str, "return": Person})
+def get_cat_person(name):
     """ find and return a cat person """
     if name in CAT_PEOPLE:
         return CAT_PEOPLE[name]
@@ -29,7 +29,8 @@ def get_cat_person(name: str) -> Person:
 
 # alternatively
 @flask_transmute.route(app, paths='/multiply')
-def multiply(left: int, right: int) -> int:
+@annotate({"left": int, "right": int, "return": int})
+def multiply(left, right):
     """ multiply two integers """
     return left * right
 
