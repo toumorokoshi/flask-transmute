@@ -2,16 +2,4 @@
 flask-transmute
 ===============
 
-.. image:: https://travis-ci.org/toumorokoshi/flask-transmute.svg?branch=master
-    :alt: build status
-    :target: https://travis-ci.org/toumorokoshi/flask-transmute
-
-.. image:: https://coveralls.io/repos/github/toumorokoshi/flask-transmute/badge.svg?branch=master
-    :alt: coverage status
-    :target: https://coveralls.io/github/toumorokoshi/flask-transmute?branch=master
-
-A transmute (http://transmute-core.readthedocs.io/) implementation for flask.
-
-You can find out more here:
-
-http://flask-transmute.readthedocs.io/en/latest/
+**NOTE: this library is now deprecated, with transute-core supporting flask directly. See https://transmute-core.readthedocs.io/**

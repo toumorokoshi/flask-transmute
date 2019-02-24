@@ -14,7 +14,7 @@ README_PATH = os.path.join(base, "README.rst")
 
 install_requires = [
     'Flask',
-    'transmute-core>=0.4.6'
+    'transmute-core>=1.11.0'
 ]
 
 tests_require = []
