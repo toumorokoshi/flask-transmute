@@ -61,6 +61,11 @@ blueprint = Blueprint('blueprint', __name__, url_prefix="/blueprint")
 def foo():
     return True
 
+@flask_transmute.route(blueprint, paths='/test/', methods=["post"], body_parameters="body")
+@annotate({"return": bool, "body": Person})
+def test(body):
+    return True
+
 
 @flask_transmute.route(app, paths="/api/v1/header",
                        response_types={
@@ -85,3 +90,6 @@ app.register_blueprint(blueprint)
 
 # finally, you can add a swagger json and a documentation page by:
 flask_transmute.add_swagger(app, "/swagger.json", "/api/")
+
+if __name__ == "__main__":
+    app.run(debug=True)
